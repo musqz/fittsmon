@@ -604,39 +604,25 @@ void print_usage() {
     const char* green_color = "\x1b[32m";
     const char* reset_color = "\x1b[0m";
 
-    printf("\n\n");
-    printf("Usage: fittsmon [monitor_name1] [monitor_name2] ...\n");
+    printf("\nUsage: fittsmon [monitor1] [monitor2] ...\n");
     printf("Example: fittsmon DP-0 HDMI-0\n\n");
-    
-    printf("%s  - If no monitor names are provided, only primary monitor will be used.\n", green_color);
-    printf("  - When monitors names are provided, provide them all. (including primary)\n");
-    printf("  - Order does not matter.%s\n\n", reset_color);
-      
-    // Additional information on editing the rc file
-    printf("\n%sTo add new extended monitors, edit the configuration file (e.g., fittsmonrc) as follows:\n", green_color);
-    printf("  - Add sections for each monitor with appropriate names.\n");
-    printf("  - Example entries for [DP-0-BottomRight] and [HDMI-0-BottomRight]:\n\n");
-    printf("    [DP-0-BottomRight]\n");
-    printf("    WheelUp=notify-send \"Mouse event\"\n");
-    printf("    WheelDown=notify-send \"Mouse event\"\n");
-    printf("    MiddleButton=notify-send \"Mouse event\"\n");
-    printf("    RightButton=notify-send \"Mouse event\"\n");
-    printf("    LeftButton=notify-send \"Mouse event\"\n");
-    printf("    Leave= \"Mouse event\"\n");
-    printf("    Enter= \"Mouse event\"\n\n");
-    printf("    [HDMI-0-BottomRight]\n");
-    printf("    WheelUp=notify-send \"Mouse event\"\n");
-    printf("    WheelDown=notify-send \"Mouse event\"\n");
-    printf("    MiddleButton=notify-send \"Mouse event\"\n");
-    printf("    RightButton=notify-send \"Mouse event\"\n");
-    printf("    LeftButton=notify-send \"Mouse event\"\n");
-    printf("    Leave= \"Mouse event\"\n");
-    printf("    Enter= \"Mouse event\"\n\n");
-    printf("%sSave the changes and restart fittsmon for them to take effect.%s\n\n", green_color, reset_color);   
-    printf("    Use 'fittsmon -h | --help' to see this message.\n");
-    printf("    Use 'fittsmon --list' to see available monitors.\n\n");
 
+    printf("%s- If no monitors are given, only the primary is used.\n", green_color);
+    printf("- If using multiple, list all of them.\n");
+    printf("- Monitor order doesn't matter.%s\n\n", reset_color);
+
+    printf("%sConfig: Edit ~/.config/fittsmonrc to add actions.\n", green_color);
+    printf("Example section:\n\n");
+    printf("  [DP-0-TopCenter]\n");
+    printf("  LeftButton=notify-send \"Clicked\"\n");
+    printf("  WheelUp=amixer -D pulse set Master 5%%+\n");
+    printf("  Enter=\n");
+    printf("  Leave=\n%s\n\n", reset_color);
+
+    printf("Use 'fittsmon --list' to show monitor names.\n");
+    printf("Use 'fittsmon --help' to show this message.\n\n");
 }
+
 
 
 int
