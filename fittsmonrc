@@ -1,0 +1,181 @@
+# Default configuration for all enabled monitors
+
+[TopCenter]
+WheelUp=amixer -D pulse set Master 5%+
+WheelDown=amixer -D pulse set Master 5%-
+WheelUpOnce=
+WheelDownOnce=
+MiddleButton=
+RightButton=pactl set-sink-mute @DEFAULT_SINK@ toggle
+LeftButton=
+Enter=
+Leave=
+
+[BottomLeft]
+WheelUp=
+WheelDown=
+WheelUpOnce=skippy-xd --wm-class 'firefox'
+WheelDownOnce=skippy-xd --wm-class 'Terminator'  
+MiddleButton=
+RightButton=skippy-xd --expose 
+LeftButton=skippy-xd --paging 
+Enter=
+Leave=
+
+[BottomCenter]
+WheelUp=
+WheelDown=
+WheelUpOnce=
+WheelDownOnce=
+MiddleButton=skippy-xd --paging 
+RightButton=skippy-xd --expose  
+LeftButton=skippy-xd --expose 
+Enter=
+Leave=
+
+[TopLeft]
+WheelUp=
+WheelDown=
+WheelUpOnce=skippy-xd --wm-class firefox
+WheelDownOnce=skippy-xd --wm-class Terminator 
+MiddleButton=
+RightButton=skippy-xd --expose 
+LeftButton=skippy-xd --paging 
+Enter=
+Leave=
+
+[BottomRight]
+WheelUp=
+WheelDown=
+WheelUpOnce=
+WheelDownOnce=
+MiddleButton=
+RightButton=
+LeftButton=
+Enter=
+Leave=
+
+[Right]
+WheelUp=
+WheelDown=
+WheelUpOnce=
+WheelDownOnce=
+MiddleButton=
+RightButton=
+LeftButton=
+Enter=
+Leave=
+
+[TopRight]
+WheelUp=
+WheelDown=
+WheelUpOnce=
+WheelDownOnce=
+MiddleButton=
+RightButton=
+LeftButton=
+Enter=mabox-terminal
+Leave=
+
+[Left]
+WheelUp=amixer -D pulse set Master 5%+
+WheelDown=amixer -D pulse set Master 5%-
+WheelUpOnce=
+WheelDownOnce=
+MiddleButton=
+RightButton=pactl set-sink-mute @DEFAULT_SINK@ toggle
+LeftButton=
+Enter=
+Leave=
+
+## Monitor-specific configuration for DP-0
+
+[DP-0-TopCenter]
+WheelUp=amixer -D pulse set Master 5%+
+WheelDown=amixer -D pulse set Master 5%-
+WheelUpOnce=
+WheelDownOnce=
+MiddleButton=
+RightButton=pactl set-sink-mute @DEFAULT_SINK@ toggle
+LeftButton=
+Enter=
+Leave=
+
+[DP-0-BottomLeft]
+WheelUp=
+WheelDown=
+WheelUpOnce=
+WheelDownOnce=
+MiddleButton=
+RightButton=
+LeftButton=
+Enter=
+Leave=
+
+[DP-0-BottomCenter]
+WheelUp=
+WheelDown=
+WheelUpOnce=
+WheelDownOnce=
+MiddleButton=skippy-xd --paging
+RightButton=skippy-xd --expose
+LeftButton=skippy-xd --expose
+Enter=
+Leave=
+
+[DP-0-TopLeft]
+WheelUp=
+WheelDown=
+WheelUpOnce=
+WheelDownOnce=
+MiddleButton=
+RightButton=
+LeftButton=
+Enter=mabox-terminal
+Leave=
+
+[DP-0-BottomRight]
+WheelUp=
+WheelDown=
+WheelUpOnce=
+WheelDownOnce=
+MiddleButton=
+RightButton=
+LeftButton=
+Enter=skippy-xd --paging
+Leave=
+
+[DP-0-Right]
+WheelUp=amixer -D pulse set Master 5%+
+WheelDown=amixer -D pulse set Master 5%-
+WheelUpOnce=
+WheelDownOnce=
+MiddleButton=
+RightButton=pactl set-sink-mute @DEFAULT_SINK@ toggle
+LeftButton=
+Enter=
+Leave=
+
+[DP-0-TopRight]
+WheelUp=
+WheelDown=
+WheelUpOnce=
+WheelDownOnce=
+MiddleButton=
+RightButton=
+LeftButton=
+Enter=skippy-xd --expose
+Leave=
+
+[DP-0-Left]
+WheelUp=
+WheelDown=
+WheelUpOnce=
+WheelDownOnce=
+MiddleButton=
+RightButton=
+LeftButton=
+Enter=
+Leave=
+
+## Monitor-specific configuration for DP-X or HDMI-X
