@@ -611,7 +611,7 @@ void print_usage() {
     printf("- If using multiple, list all of them.\n");
     printf("- Monitor order doesn't matter.%s\n\n", reset_color);
 
-    printf("%sConfig: Edit ~/.config/fittsmonrc to add actions.\n", green_color);
+    printf("%sConfig: Edit ~/.config/fittsmon/fittsmonrc to add actions.\n", green_color);
     printf("Example section:\n\n");
     printf("  [DP-0-TopCenter]\n");
     printf("  LeftButton=notify-send \"Clicked\"\n");
@@ -651,13 +651,13 @@ main(int argc, char* argv[])
     /* Check for help or list command */
     if (strcmp(argv[1], "--help") == 0 || strcmp(argv[1], "-h") == 0) {
       print_usage();
-      print_monitor_list();
-      xcb_disconnect(connection);
+      /* print_monitor_list();
+      xcb_disconnect(connection); */
       return 0;
     }
     
     if (strcmp(argv[1], "--list") == 0 || strcmp(argv[1], "-l") == 0) {
-      print_monitor_list();
+      /* print_monitor_list();*/
       xcb_disconnect(connection);
       return 0;
     }
