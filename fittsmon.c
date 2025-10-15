@@ -604,23 +604,29 @@ void print_usage() {
     const char* green_color = "\x1b[32m";
     const char* reset_color = "\x1b[0m";
 
+    // Start green color
+    printf("%s", green_color);
+
     printf("\nUsage: fittsmon [monitor1] [monitor2] ...\n");
     printf("Example: fittsmon DP-0 HDMI-0\n\n");
 
-    printf("%s- If no monitors are given, only the primary is used.\n", green_color);
+    printf("- If no monitors are given, only the primary is used.\n");
     printf("- If using multiple, list all of them.\n");
-    printf("- Monitor order doesn't matter.%s\n\n", reset_color);
+    printf("- Monitor order doesn't matter.\n\n");
 
-    printf("%sConfig: Edit ~/.config/fittsmon/fittsmonrc to add actions.\n", green_color);
+    printf("Config: Edit ~/.config/fittsmon/fittsmonrc to add actions.\n");
     printf("Example section:\n\n");
     printf("  [DP-0-TopCenter]\n");
     printf("  LeftButton=notify-send \"Clicked\"\n");
     printf("  WheelUp=amixer -D pulse set Master 5%%+\n");
     printf("  Enter=\n");
-    printf("  Leave=\n%s\n\n", reset_color);
+    printf("  Leave=\n\n");
 
     printf("Use 'fittsmon --list' to show monitor names.\n");
     printf("Use 'fittsmon --help' to show this message.\n\n");
+
+    // Reset color back to default
+    printf("%s", reset_color);
 }
 
 
