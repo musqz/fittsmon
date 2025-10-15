@@ -11,10 +11,10 @@
 - mabox linux 'openbox'
 - 2 monitors with different size
 
-- Should work with other desktop managers or window managers.
+_Should work with other desktop managers or window managers._
 
 **FittsMon** is a lightweight X11 utility that binds mouse actions (clicks, scrolls, enter/leave) to screen corners and edges, triggering custom commands.
-Inspired by [Fitts’s Law](https://en.wikipedia.org/wiki/Fitts%27s_law), it transforms screen edges into powerful productivity zones — now with full multi-monitor support.
+Inspired by [Fitts’s Law](https://en.wikipedia.org/wiki/Fitts%27s_law), it transforms screen edges into powerful productivity zones.
 
 ---
 
