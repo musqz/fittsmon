@@ -625,9 +625,20 @@ void print_usage() {
     printf("Use 'fittsmon --list' to show monitor names.\n");
     printf("Use 'fittsmon --help' to show this message.\n\n");
 
+    // Add Positions and Events help
+    printf("Available Positions:\n");
+    printf("  Corners: TopLeft, TopRight, BottomLeft, BottomRight\n");
+    printf("  Edges:   TopCenter, BottomCenter, Left, Right\n\n");
+
+    printf("Available Events:\n");
+    printf("  Mouse Buttons: LeftButton, RightButton, MiddleButton\n");
+    printf("  Wheel:         WheelUp, WheelDown, WheelUpOnce, WheelDownOnce\n");
+    printf("  Pointer:       Enter, Leave\n\n");
+
     // Reset color back to default
     printf("%s", reset_color);
 }
+
 
 
 
