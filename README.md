@@ -1,13 +1,20 @@
-# FittsMon – Mouse Corner Action Tool for X11 (Multi-Monitor Support)
+# ### FittsMon ### 
 
-### I actively use FittsMon on my daily Mabox *Openbox Desktop Linux system.
+## _Mouse Corner Action Tool for X11  with Multi-Monitor Support._
+
+> I actively use FittsMon on my daily Mabox *Openbox Desktop Linux system without any issues.
+
+### A perfect match = [skippy-xd](https://github.com/felixfung/skippy-xd) & fittsmon
+
+**Daily used setup:**
+
+- mabox linux 'openbox'
+- 2 monitors with different size
 
 - Should work with other desktop managers or window managers.
 
 **FittsMon** is a lightweight X11 utility that binds mouse actions (clicks, scrolls, enter/leave) to screen corners and edges, triggering custom commands.
 Inspired by [Fitts’s Law](https://en.wikipedia.org/wiki/Fitts%27s_law), it transforms screen edges into powerful productivity zones — now with full multi-monitor support.
-
-> Forked from [`fittstool`](https://github.com/napcok/fittstool) and enhanced for modern workflows.
 
 ---
 
