@@ -649,9 +649,6 @@ main(int argc, char* argv[])
   /* get screen */
   screen = xcb_setup_roots_iterator(xcb_get_setup(connection)).data;
   
-  /* Get all monitors */
-  monitor_count = get_all_monitors(connection, screen);
-  
   /* Process command line arguments */
   if (argc > 1) {
     /* Check for help or list command */
@@ -662,6 +659,9 @@ main(int argc, char* argv[])
       return 0;
     }
     
+    /* Get all monitors */
+  monitor_count = get_all_monitors(connection, screen);
+  
     if (strcmp(argv[1], "--list") == 0 || strcmp(argv[1], "-l") == 0) {
       /* print_monitor_list();*/
       xcb_disconnect(connection);
