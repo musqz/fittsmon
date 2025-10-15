@@ -1,4 +1,4 @@
-# ### FittsMon ### 
+# FittsMon
 
 ## _Mouse Corner Action Tool for X11  with Multi-Monitor Support._
 
