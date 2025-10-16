@@ -4,8 +4,6 @@
 
 > I actively use FittsMon on my daily Mabox *Openbox Desktop Linux system without any issues.
 
-### A perfect match = [skippy-xd](https://github.com/felixfung/skippy-xd) & fittsmon
-
 **Daily used setup:**
 
 - mabox linux 'openbox'
