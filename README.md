@@ -77,8 +77,10 @@ On first run, a sample config will be created at:
 
 ### Start FittsMon single monitor
 
+User need to set at least one monitor.
+
 ```
-fittsmon
+fittsmon <monitor>
 ```
 
 ### Start FittsMon multi monitors
