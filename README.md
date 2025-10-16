@@ -18,7 +18,7 @@ Inspired by [Fitts’s Law](https://en.wikipedia.org/wiki/Fitts%27s_law), it tra
 
 ---
 
-## 🔧 Features
+## Features
 
 - **Bind mouse buttons** and wheel events to commands
 - **Minimal dependencies**, no daemon or tray clutter
@@ -28,7 +28,7 @@ You can specify which monitors to use by providing their names when starting the
 
 ---
 
-## 📦 Dependencies
+## Dependencies
 
 ### General Dependencies
 
@@ -56,7 +56,7 @@ sudo apt-get install libxcb1-dev libxrandr-dev libglib2.0-dev xcb-util-dev
 
 ---
 
-## 🛠️ Installation
+## Installation
 
 ```
 git clone https://github.com/musqz/fittsmon.git
@@ -73,7 +73,7 @@ On first run, a sample config will be created at:
 
 ---
 
-## 🚀 Usage
+## Usage
 
 ### Start FittsMon single monitor
 
@@ -114,7 +114,7 @@ $ fittsmon -h | --help
 
 ---
 
-## ⚙️ Configuration
+## Configuration
 
 Edit the config at `~/.config/fittsmon/fittsmonrc`.
 
@@ -181,7 +181,7 @@ Leave=
 ```
 ---
 
-## 🖥️ Multi-Monitor Setup
+## Multi-Monitor Setup
 
 1. **Run `fittsmon --list`** to get monitor names  
 2. **Add sections in the config** using the format `[MonitorName-Position]`  
@@ -189,7 +189,7 @@ Leave=
 
 ---
 
-## 🔄 Autostart
+## Autostart
 
 Add something like `fittsmon DP-0 HDM-1 &` to:
 - `.xinitrc`, `.xprofile`, or your WM's autostart script
@@ -197,10 +197,14 @@ Add something like `fittsmon DP-0 HDM-1 &` to:
 
 ---
 
-## 📄 License
+## License
 
 Same license as the original [`fittstool`](https://github.com/napcok/fittstool) project.
 
+## Wiki
+
+    [Fittsmon wiki](https://github.com/musqz/fittsmon/wiki/FittsMon-Wiki:)
+    
 ## Disclaimer 
 
 The original code has been adapted using AI assistance. 
