@@ -665,8 +665,6 @@ main(int argc, char* argv[])
     /* Check for help or list command */
     if (strcmp(argv[1], "--help") == 0 || strcmp(argv[1], "-h") == 0) {
       print_usage();
-      /* print_monitor_list();
-      xcb_disconnect(connection); */
       return 0;
     }
     
@@ -674,7 +672,6 @@ main(int argc, char* argv[])
   monitor_count = get_all_monitors(connection, screen);
   
     if (strcmp(argv[1], "--list") == 0 || strcmp(argv[1], "-l") == 0) {
-      /* print_monitor_list();*/
       xcb_disconnect(connection);
       return 0;
     }
