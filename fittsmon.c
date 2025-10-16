@@ -642,46 +642,42 @@ void print_usage() {
 
 
 
-int
-main(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
   xcb_connection_t *connection;
   xcb_screen_t *screen;
   int i;
   
-  /* open connection to X server. */
   connection = xcb_connect(NULL, NULL);
-  
   if (xcb_connection_has_error(connection)) {
     fprintf(stderr, "Failed to connect to X server\n");
     return 1;
   }
   
-  /* get screen */
   screen = xcb_setup_roots_iterator(xcb_get_setup(connection)).data;
-  
-  /* Process command line arguments */
+
+  /* Always detect monitors first */
+  monitor_count = get_all_monitors(connection, screen);
+
+  /* Command line processing */
   if (argc > 1) {
-    /* Check for help or list command */
     if (strcmp(argv[1], "--help") == 0 || strcmp(argv[1], "-h") == 0) {
       print_usage();
       return 0;
     }
-    
-    /* Get all monitors */
-  monitor_count = get_all_monitors(connection, screen);
-  
+
     if (strcmp(argv[1], "--list") == 0 || strcmp(argv[1], "-l") == 0) {
+      print_monitor_list();
       xcb_disconnect(connection);
       return 0;
     }
-    
+
     /* Enable specified monitors */
     for (i = 1; i < argc; i++) {
       enable_monitor_by_name(argv[i]);
     }
   } else {
-    /* No arguments, enable primary monitor or first monitor */
+    /* No arguments, enable primary monitor or fallback */
     int primary_found = 0;
     for (i = 0; i < monitor_count; i++) {
       if (monitors[i].primary) {
@@ -691,30 +687,23 @@ main(int argc, char* argv[])
         break;
       }
     }
-    
+
     if (!primary_found && monitor_count > 0) {
       monitors[0].enabled = 1;
       printf("No primary monitor found, using first monitor: %s\n", monitors[0].name);
     }
   }
-  
-  /* Initialize each enabled monitor */
+
+  /* Continue normal setup */
   for (i = 0; i < monitor_count; i++) {
     if (monitors[i].enabled) {
       init_options(i);
     }
   }
-  
-  /* Read configuration */
+
   config_read();
-  
-  /* Create windows for all enabled monitors */
   server_create_windows(connection, screen);
-  
-  /* Event loop */
   server_event_loop(connection);
-  
-  /* Close connection to server */
   xcb_disconnect(connection);
   
   return 0;
