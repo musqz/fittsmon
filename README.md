@@ -203,7 +203,7 @@ Same license as the original [`fittstool`](https://github.com/napcok/fittstool) 
 
 ## Wiki
 
-    [Fittsmon wiki](https://github.com/musqz/fittsmon/wiki/FittsMon-Wiki:)
+[Fittsmon wiki](https://github.com/musqz/fittsmon/wiki/FittsMon-Wiki:)
     
 ## Disclaimer 
 
