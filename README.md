@@ -136,8 +136,7 @@ Event=command
 ### Positions
 
 - Corners: `TopLeft`, `TopRight`, `BottomLeft`, `BottomRight`
-- Edges: `Left`, `Right`
-- Extras: `TopCenter`, `BottomCenter`
+- Edges: `Left`, `Right`, `TopCenter`, `BottomCenter`
 
 ### Events
 
