@@ -118,6 +118,15 @@ Edit the config at `~/.config/fittsmon/fittsmonrc`.
 
 Each section targets a screen area on a monitor:
 
+Primary monitor
+
+```
+[Position]
+Event=command
+```
+
+External monitor
+
 ```
 [MonitorName-Position]
 Event=command
