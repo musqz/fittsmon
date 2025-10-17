@@ -604,7 +604,6 @@ void print_usage() {
     const char* green_color = "\x1b[32m";
     const char* reset_color = "\x1b[0m";
 
-    // Start green color
     printf("%s", green_color);
 
     printf("\nUsage: fittsmon [monitor1] [monitor2] ...\n");
@@ -625,7 +624,6 @@ void print_usage() {
     printf("Use 'fittsmon --list' to show monitor names.\n");
     printf("Use 'fittsmon --help' to show this message.\n\n");
 
-    // Add Positions and Events help
     printf("Available Positions:\n");
     printf("  Corners: TopLeft, TopRight, BottomLeft, BottomRight\n");
     printf("  Edges:   TopCenter, BottomCenter, Left, Right\n\n");
@@ -635,7 +633,6 @@ void print_usage() {
     printf("  Wheel:         WheelUp, WheelDown, WheelUpOnce, WheelDownOnce\n");
     printf("  Pointer:       Enter, Leave\n\n");
 
-    // Reset color back to default
     printf("%s", reset_color);
 }
 

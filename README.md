@@ -136,32 +136,6 @@ Event=command
 - Wheel: `WheelUp`, `WheelDown`, `WheelUpOnce`, `WheelDownOnce`
 - Pointer: `Enter`, `Leave`
 
-### Example
-
-```ini
-[TopCenter]
-WheelUp=amixer -D pulse set Master 5%+
-WheelDown=amixer -D pulse set Master 5%-
-WheelUpOnce=notify-send "Default: Wheel Up Once"
-WheelDownOnce=notify-send "Default: Wheel Down Once"
-MiddleButton=notify-send "Default: Middle Button"
-RightButton=pactl set-sink-mute @DEFAULT_SINK@ toggle
-LeftButton=notify-send "Default: Left Button"
-Enter=
-Leave=
-
-[DP-0-TopCenter]
-WheelUp=amixer -D pulse set Master 5%+
-WheelDown=amixer -D pulse set Master 5%-
-WheelUpOnce=notify-send "Default: Wheel Up Once"
-WheelDownOnce=notify-send "Default: Wheel Down Once"
-MiddleButton=notify-send "Default: Middle Button"
-RightButton=pactl set-sink-mute @DEFAULT_SINK@ toggle
-LeftButton=notify-send "Default: Left Button"
-Enter=
-Leave=
-```
-
 ### NOTE
 
 > To avoid strange behaviour. Keep all lines in each section.
