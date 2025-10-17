@@ -161,14 +161,6 @@ Leave=
 ```
 ---
 
-## Multi-Monitor Setup
-
-1. **Run `fittsmon --list`** to get monitor names  
-2. **Add sections in the config** using the format `[MonitorName-Position]`  
-3. **Start FittsMon** with or without specifying monitors
-
----
-
 ## Autostart
 
 Add something like `fittsmon DP-0 HDM-1 &` to:
@@ -187,10 +179,7 @@ Same license as the original [`fittstool`](https://github.com/napcok/fittstool) 
     
 ## Disclaimer 
 
-The original code has been adapted using AI assistance. 
-
+_The original code has been adapted using AI assistance. 
 The script is so tiny and runs so nice on the openbox desktop (2 monitors), 
-
 so why not share it.
-
-Due to a lack of expertise in C programming, this repository will not be actively maintained. 
+Due to a lack of expertise in C programming, this repository will not be actively maintained._
