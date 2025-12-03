@@ -42,16 +42,25 @@ clean:
 install:
 	@echo "Creating destination directory if it does not exist: $(DEST_DIR)"
 	@mkdir -p $(DEST_DIR)
-	@echo "Copying $(CONFIG_FILE) to $(DEST_FILE)"
-	@cp $(CONFIG_FILE) $(DEST_FILE)
+	
+	@if [ -e $(DEST_FILE) ]; then \
+		echo "Configuration file $(DEST_FILE) already exists – leaving it untouched."; \
+	else \
+		echo "Copying $(CONFIG_FILE) to $(DEST_FILE)"; \
+		cp $(CONFIG_FILE) $(DEST_FILE); \
+	fi
+	
 	@echo "Installing executable to $(INSTALL_DIR)/$(TARGET)"
 	@sudo mkdir -p $(INSTALL_DIR)
 	@sudo cp $(TARGET) $(INSTALL_DIR)
+
 	@echo "Installing man page to $(MAN_INSTALL_DIR)"
 	@sudo mkdir -p $(MAN_INSTALL_DIR)
 	@sudo cp $(MAN_PAGE) $(MAN_INSTALL_DIR)
+
 	@echo "Installation complete!"
 	@echo "You can now access the manual with: man fittsmon"
+
 
 uninstall:
 	@echo "Removing executable from $(INSTALL_DIR)"
