@@ -5,8 +5,6 @@
 **FittsMon** is a lightweight X11 utility that binds mouse actions (clicks, scrolls, enter/leave) to screen corners and edges, triggering custom commands.
 Inspired by [Fitts's Law](https://en.wikipedia.org/wiki/Fitts%27s_law), it transforms screen edges into powerful productivity zones — now with full multi-monitor support.
 
-> Forked from [`fittstool`](https://github.com/napcok/fittstool) and enhanced for modern workflows.
-
 ---
 
 ## 🔧 Features
