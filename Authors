@@ -1,13 +1,11 @@
 # Authors
 
-FittsTool and FittsMon are developed by:
+FittsTool is  developed by:
 
 - **Yasen Atanasov** <yasen.atanasov@gmail.com> (2009)
   - Project maintainer of the original FittsTool.
 
-- **napcok** (2025)
-  - Forked from Yasen's FittsTool and maintained it for Mabox.
-  - Website: [https://github.com/napcok/fittstool](https://github.com/napcok/fittstool)
+Fittsmon is developed by:
 
 - **musqz** (2025)
   - Forked and renamed the project from FittsTool to FittsMon.

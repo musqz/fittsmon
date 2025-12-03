@@ -1,185 +1,197 @@
-# FittsMon
+# FittsMon – Mouse Corner Action Tool for X11 (Multi-Monitor Support)
 
-## _Mouse Corner Action Tool for X11  with Multi-Monitor Support._
-
-> I actively use FittsMon on my daily Mabox *Openbox Desktop Linux system without any issues.
-
-**Daily used setup:**
-
-- mabox linux 'openbox'
-- 2 monitors with different size
-
-_Should work with other desktop managers or window managers._
+### Status
 
 **FittsMon** is a lightweight X11 utility that binds mouse actions (clicks, scrolls, enter/leave) to screen corners and edges, triggering custom commands.
-Inspired by [Fitts’s Law](https://en.wikipedia.org/wiki/Fitts%27s_law), it transforms screen edges into powerful productivity zones.
+Inspired by [Fitts's Law](https://en.wikipedia.org/wiki/Fitts%27s_law), it transforms screen edges into powerful productivity zones — now with full multi-monitor support.
+
+> Forked from [`fittstool`](https://github.com/napcok/fittstool) and enhanced for modern workflows.
 
 ---
 
-## Features
+## 🔧 Features
 
 - **Bind mouse buttons** and wheel events to commands
+- **Multiple event types**: button clicks, scroll wheel (throttled and non-throttled), cursor enter/leave
 - **Minimal dependencies**, no daemon or tray clutter
 - **Easy-to-edit** INI-style configuration
-- **Multi-Monitor Support:**  
-You can specify which monitors to use by providing their names when starting the program.
+- **Multi-Monitor Support:** Enable fittsmon on specific monitors or all enabled monitors
+- **Security hardening:** Command validation prevents shell injection attacks
 
 ---
 
-## Dependencies
+## 📦 Dependencies
 
 ### General Dependencies
 
-- `xcb`, `x11`, `xcb-randr`
-- `glib-2.0`
+- `xcb`, `x11`, `xcb-randr` (X11 libraries)
+- `glib-2.0` (GLib library)
 
-### Arch Manjaro (pacman)
+### Arch / Manjaro (pacman)
 
-To install the necessary packages on Arch Manjaro, run:
-
-```
+```bash
 sudo pacman -S libxcb libxrandr glib2 xcb-proto
 ```
 
-### Debian/Ubuntu (apt)
+### Debian / Ubuntu (apt)
 
-To install the necessary packages on Debian or Ubuntu, run: 
-
-Note: Not tested.
-
-```
+```bash
 sudo apt-get update
 sudo apt-get install libxcb1-dev libxrandr-dev libglib2.0-dev xcb-util-dev
 ```
 
 ---
 
-## Installation
+## 🛠️ Installation 
 
-```
-git clone https://github.com/musqz/fittsmon.git
+```bash
+git clone https://gitlab.com/muzlabz/fittsmon.git
 cd fittsmon
-make
-sudo make install
+make && make install  
 ```
 
 On first run, a sample config will be created at:
-
 ```
 ~/.config/fittsmon/fittsmonrc
 ```
 
 ---
 
-## Usage
+## 🚀 Usage
 
-### Start FittsMon single monitor
+### Start FittsMon with primary monitor (default)
 
-```
-fittsmon 
-```
-
-### Start FittsMon multi monitors
-
-In case of multiple monitors, specify which monitors to use, including primary display. Order does not matter.
-
-```
-fittsmon DP-0 HDMI-0
+```bash
+fittsmon
 ```
 
-If `HDMI-0` is `Extended` and used only in the command, only rules for HDMI-0 will be active, 
+Automatically uses the primary monitor.
 
-and the primary display will have no rules applied.
+### Start FittsMon with specific monitors
 
-This way you can turn off the Default display from fittsmon activity.
+Use the `--monitor` flag to include or exclude monitors.
+
+```bash
+fittsmon --monitor DP-0 HDMI-0
+```
 
 ### List available monitors
 
-```
-# See available monitors.
-# This will output names like `eDP-1`, `HDMI-0`, `DP-0`, which you can use in the config.
+Display all detected monitors and their properties:
 
-$ fittsmon --list 
+```bash
+fittsmon --list
 ```
+
+Output shows monitor names like `eDP-1`, `HDMI-0`, `DP-0` (use these in the config file).
 
 ### Help
 
-```
-# Usage help text.
+Display usage information and examples:
 
-$ fittsmon -h | --help 
+```bash
+fittsmon --help
+fittsmon -h
 ```
 
 ---
 
-## Configuration
+## ⚙️ Configuration
 
 Edit the config at `~/.config/fittsmon/fittsmonrc`.
 
 Each section targets a screen area on a monitor:
 
-Primary monitor
-
-```
-[Position]
-Event=command
-```
-
-External monitor
-
-```
+```ini
 [MonitorName-Position]
 Event=command
-
 ```
 
 ### Positions
 
 - Corners: `TopLeft`, `TopRight`, `BottomLeft`, `BottomRight`
-- Edges: `Left`, `Right`, `TopCenter`, `BottomCenter`
+- Edges: `Top`, `Bottom`, `Left`, `Right`
+- Center edges: `TopCenter`, `BottomCenter`
 
 ### Events
 
-- Mouse buttons: `LeftButton`, `RightButton`, `MiddleButton`
-- Wheel: `WheelUp`, `WheelDown`, `WheelUpOnce`, `WheelDownOnce`
-- Pointer: `Enter`, `Leave`
+- **Mouse buttons:** `LeftButton`, `RightButton`, `MiddleButton`
+- **Wheel scroll:** `WheelUp`, `WheelDown` (execute on every scroll)
+- **Wheel throttled:** `WheelUpOnce`, `WheelDownOnce` (execute at most once per 2 seconds)
+- **Pointer events:** `Enter`, `Leave`
 
-### NOTE
+### Example
 
-> To avoid strange behaviour. Keep all lines in each section.
+```ini
+[TopCenter]
+WheelUp=amixer -D pulse set Master 5%+
+WheelDown=amixer -D pulse set Master 5%-
+MiddleButton=notify-send "Default: Middle Button"
+RightButton=pactl set-sink-mute @DEFAULT_SINK@ toggle
 
+[DP-0-TopCenter]
+Enter=skippy-xd 
 ```
-WheelUp=
-WheelDown=
-WheelUpOnce=
-WheelDownOnce=
-MiddleButton=
-RightButton=
-LeftButton=
-Enter=
-Leave=
-```
+
+## 🖥️ Multi-Monitor Setup
+
+1. **Run `fittsmon --list`** to get monitor names and properties
+2. **Add sections in the config** using the format `[MonitorName-Position]`
+3. **Start FittsMon** with or without specifying monitors
+
+### Configuration Precedence
+
+1. **Monitor-specific config** (`[MonitorName-Position]`) – highest priority
+2. **Default config** (`[Position]`) – fallback for all enabled monitors
+
 ---
 
-## Autostart
+## 🔄 Autostart
 
-Add something like `fittsmon DP-0 HDM-1 &` to:
-- `.xinitrc`, `.xprofile`, or your WM's autostart script
-- Your desktop environment's session startup settings
+Add to `.xinitrc`, `.xprofile`, or your WM's autostart script:
+
+```bash
+# Primary monitor only (default)
+fittsmon &
+
+# Specific monitors
+fittsmon --monitor DP-0 HDMI-0 &
+```
+
+Or add to your desktop environment's session startup settings.
 
 ---
 
-## License
+## 🔒 Security
 
-Same license as the original [`fittstool`](https://github.com/napcok/fittstool) project.
+Command validation prevents shell injection attacks:
+- Commands containing shell metacharacters (`;`, `|`, `&`, `>`, `<`, `` ` ``, `$`, `()`, etc.) are rejected
+- For complex operations, create a shell script and reference it instead
 
-## Wiki
+Example safe config:
+```ini
+[TopRight]
+LeftButton=/home/user/scripts/my_action.sh arg1 arg2
+```
 
-[Fittsmon wiki](https://github.com/musqz/fittsmon/wiki/FittsMon-Wiki:)
-    
-## Disclaimer 
+---
 
-_The original code has been adapted using AI assistance. 
-The script is so tiny and runs so nice on the openbox desktop (2 monitors), 
-so why not share it.
-Due to a lack of expertise in C programming, this repository will not be actively maintained._
+## 📚 Man Page
+
+For comprehensive documentation:
+
+```bash
+man fittsmon
+```
+
+Or view the man page source:
+
+```bash
+man ./fittsmon.1
+```
+
+---
+
+## 📄 License
+
+Same license as the original [`fittstool`](https://github.com/napcok/fittstool) project (GPL-2.0).

@@ -4,7 +4,7 @@
 *             Modified to support multiple monitors on Manjaro Linux.
 *
 * Copyright (C) 2009 Yasen Atanasov (yasen.atanasov@gmail.com)
-* Modified 2025
+* Modified 2025 by Eric Bakker (linuxbirdtweets@duck.com)
 *
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License version 2
@@ -90,6 +90,7 @@ int monitor_count = 0;
 
 /* function prototypes */
 int  can_execute (const int corner, const int direction);
+int  is_safe_command (const char *cmd);
 void config_read ();
 void config_read_file (const char *file_path);
 void fill_file(const char *file_path);
@@ -98,7 +99,7 @@ void server_create_windows(xcb_connection_t *connection, xcb_screen_t *screen);
 int  server_find_window(xcb_window_t win);
 void server_event_loop (xcb_connection_t *connection);
 int  get_all_monitors(xcb_connection_t *connection, xcb_screen_t *screen);
-void enable_monitor_by_name(const char *name);
+int  enable_monitor_by_name(const char *name);
 void print_monitor_list();
 
 /* implementations */
@@ -213,7 +214,8 @@ int get_all_monitors(xcb_connection_t *connection, xcb_screen_t *screen) {
             monitors[count].enabled = 0;  // By default, no monitor is enabled
             
             // Copy monitor name (with size limit)
-            int copy_len = (name_len < sizeof(monitors[count].name) - 1) ? name_len : sizeof(monitors[count].name) - 1;
+            size_t max_len = sizeof(monitors[count].name) - 1;
+            size_t copy_len = (name_len < (int)max_len) ? (size_t)name_len : max_len;
             strncpy(monitors[count].name, name, copy_len);
             monitors[count].name[copy_len] = '\0';  // Ensure null termination
             
@@ -252,16 +254,25 @@ int get_all_monitors(xcb_connection_t *connection, xcb_screen_t *screen) {
     return count;
 }
 
-/* Enable a monitor by its name */
-void enable_monitor_by_name(const char *name) {
+/* Enable a monitor by its name - returns 1 on success, 0 on failure */
+int enable_monitor_by_name(const char *name) {
+    if (!name || strlen(name) == 0) {
+        fprintf(stderr, "Error: Empty monitor name\n");
+        return 0;
+    }
+    
     for (int i = 0; i < monitor_count; i++) {
         if (strcmp(monitors[i].name, name) == 0) {
             monitors[i].enabled = 1;
-            printf("Enabled monitor: %s\n", name);
-            return;
+            printf("Enabled monitor: %s (%dx%d at %d,%d)\n", 
+                name, monitors[i].width, monitors[i].height,
+                monitors[i].x, monitors[i].y);
+            return 1;
         }
     }
-    printf("Warning: Monitor '%s' not found\n", name);
+    fprintf(stderr, "Warning: Monitor '%s' not found. Available monitors:\n", name);
+    print_monitor_list();
+    return 0;
 }
 
 /* Print list of available monitors */
@@ -335,33 +346,72 @@ server_event_loop (xcb_connection_t *connection)
         bp = (xcb_button_press_event_t *)event;
         cur_win = server_find_window(bp->event);
         /* printf("this event is coming from window %d \n", cur_win); */
+        if (cur_win < 0) {
+          fprintf(stderr, "Warning: Button press event from unknown window\n");
+          break;
+        }
         switch (bp->detail) {
           case LEFT_BUTTON:
-            if (str_defined(get_cmd(cur_win,LeftButton))) 
-              system(get_cmd(cur_win,LeftButton));
+            if (str_defined(get_cmd(cur_win,LeftButton))) {
+              const char *cmd = get_cmd(cur_win,LeftButton);
+              if (is_safe_command(cmd)) {
+                int ret = system(cmd);
+                if (ret != 0) fprintf(stderr, "Command failed with code %d\n", ret);
+              }
+            }
           break;
           
           case MIDDLE_BUTTON:
-            if (str_defined(get_cmd(cur_win,MiddleButton))) 
-              system(get_cmd(cur_win,MiddleButton));
+            if (str_defined(get_cmd(cur_win,MiddleButton))) {
+              const char *cmd = get_cmd(cur_win,MiddleButton);
+              if (is_safe_command(cmd)) {
+                int ret = system(cmd);
+                if (ret != 0) fprintf(stderr, "Command failed with code %d\n", ret);
+              }
+            }
             break;
           case RIGHT_BUTTON:
-            if (str_defined(get_cmd(cur_win,RightButton))) 
-              system(get_cmd(cur_win,RightButton));
+            if (str_defined(get_cmd(cur_win,RightButton))) {
+              const char *cmd = get_cmd(cur_win,RightButton);
+              if (is_safe_command(cmd)) {
+                int ret = system(cmd);
+                if (ret != 0) fprintf(stderr, "Command failed with code %d\n", ret);
+              }
+            }
           break;
           
           case WHEEL_UP_BUTTON:
-            if (str_defined(get_cmd(cur_win,WheelUp))) 
-              system(get_cmd(cur_win,WheelUp));
-            if ( str_defined(get_cmd(cur_win,WheelUpOnce)) && can_execute(cur_win, 0) )
-              system(get_cmd(cur_win,WheelUpOnce));
+            if (str_defined(get_cmd(cur_win,WheelUp))) {
+              const char *cmd = get_cmd(cur_win,WheelUp);
+              if (is_safe_command(cmd)) {
+                int ret = system(cmd);
+                if (ret != 0) fprintf(stderr, "Command failed with code %d\n", ret);
+              }
+            }
+            if ( str_defined(get_cmd(cur_win,WheelUpOnce)) && can_execute(cur_win, 0) ) {
+              const char *cmd = get_cmd(cur_win,WheelUpOnce);
+              if (is_safe_command(cmd)) {
+                int ret = system(cmd);
+                if (ret != 0) fprintf(stderr, "Command failed with code %d\n", ret);
+              }
+            }
           break;
           
           case WHEEL_DOWN_BUTTON:
-            if (str_defined(get_cmd(cur_win,WheelDown))) 
-              system(get_cmd(cur_win,WheelDown));
-            if (str_defined(get_cmd(cur_win,WheelDownOnce)) && can_execute(cur_win, 1) )
-              system(get_cmd(cur_win,WheelDownOnce));
+            if (str_defined(get_cmd(cur_win,WheelDown))) {
+              const char *cmd = get_cmd(cur_win,WheelDown);
+              if (is_safe_command(cmd)) {
+                int ret = system(cmd);
+                if (ret != 0) fprintf(stderr, "Command failed with code %d\n", ret);
+              }
+            }
+            if (str_defined(get_cmd(cur_win,WheelDownOnce)) && can_execute(cur_win, 1) ) {
+              const char *cmd = get_cmd(cur_win,WheelDownOnce);
+              if (is_safe_command(cmd)) {
+                int ret = system(cmd);
+                if (ret != 0) fprintf(stderr, "Command failed with code %d\n", ret);
+              }
+            }
           break;
         }
       break;
@@ -369,15 +419,25 @@ server_event_loop (xcb_connection_t *connection)
       case XCB_ENTER_NOTIFY:
         enter = (xcb_enter_notify_event_t *)event;
         cur_win = server_find_window(enter->event);
-        if (str_defined(get_cmd(cur_win,Enter))) 
-          system(get_cmd(cur_win,Enter));
+        if (cur_win >= 0 && str_defined(get_cmd(cur_win,Enter))) {
+          const char *cmd = get_cmd(cur_win,Enter);
+          if (is_safe_command(cmd)) {
+            int ret = system(cmd);
+            if (ret != 0) fprintf(stderr, "Command failed with code %d\n", ret);
+          }
+        }
       break;
       
       case XCB_LEAVE_NOTIFY:
         leave = (xcb_leave_notify_event_t *)event;
         cur_win = server_find_window(leave->event);
-        if (str_defined(get_cmd(cur_win,Leave))) 
-          system(get_cmd(cur_win,Leave));
+        if (cur_win >= 0 && str_defined(get_cmd(cur_win,Leave))) {
+          const char *cmd = get_cmd(cur_win,Leave);
+          if (is_safe_command(cmd)) {
+            int ret = system(cmd);
+            if (ret != 0) fprintf(stderr, "Command failed with code %d\n", ret);
+          }
+        }
       break;
       
       default:
@@ -408,6 +468,47 @@ can_execute (const int corner, int direction)
   }
   
   return 0; 
+}
+
+/* Validate command string for dangerous shell metacharacters */
+int
+is_safe_command (const char *cmd)
+{
+  if (!cmd || strlen(cmd) == 0) return 0;
+
+  /* Create a temporary copy and trim trailing spaces and a single trailing '&' */
+  char buf[256];
+  size_t len = strlen(cmd);
+  if (len >= sizeof(buf)) {
+    fprintf(stderr, "Warning: Command too long (max %zu bytes): %s\n", sizeof(buf) - 1, cmd);
+    return 0; /* overly long - treat as unsafe */
+  }
+  strcpy(buf, cmd);
+
+  /* Trim trailing whitespace */
+  while (len > 0 && (buf[len-1] == ' ' || buf[len-1] == '\t')) {
+    buf[--len] = '\0';
+  }
+
+  /* If the last non-space char is '&', remove it for validation (allow backgrounding)
+     but keep it in the stored command; this only strips for the safety check. */
+  if (len > 0 && buf[len-1] == '&') {
+    buf[--len] = '\0';
+    while (len > 0 && (buf[len-1] == ' ' || buf[len-1] == '\t')) {
+      buf[--len] = '\0';
+    }
+  }
+
+  /* Check for dangerous shell metacharacters (excluding '&' because handled above) */
+  const char *dangerous = ";|><`$()\\\"'";
+  size_t safe_len = strcspn(buf, dangerous);
+
+  if (safe_len != strlen(buf)) {
+    fprintf(stderr, "Warning: Potentially dangerous command blocked (contains shell metacharacters): %s\n", cmd);
+    return 0;
+  }
+
+  return 1;
 }
 
 void
@@ -498,12 +599,21 @@ config_read_file (const char *file_path)
         
         for (j = 0; j < 9; j++) {
           if ((current_value = g_key_file_get_value(config_file, group_name, events[j], NULL))) {
-            unless (g_str_has_suffix(current_value, "&"))
-              current_value = g_strdup_printf("%s &", current_value);
-              
-            strcpy(window_options[base_idx + i].commands[j], current_value);
+            gchar *cmd_to_use = current_value;
+            gchar *allocated_cmd = NULL;
+            
+            unless (g_str_has_suffix(current_value, "&")) {
+              allocated_cmd = g_strdup_printf("%s &", current_value);
+              cmd_to_use = allocated_cmd;
+            }
+            
+            strncpy(window_options[base_idx + i].commands[j], cmd_to_use, 199);
+            window_options[base_idx + i].commands[j][199] = '\0';
             printf("Default %s %s : %s (monitor: %s)\n", 
-                  sections[i], events[j], current_value, monitors[m].name);
+                  sections[i], events[j], cmd_to_use, monitors[m].name);
+            
+            g_free(allocated_cmd);
+            g_free(current_value);
           }
         }
       }
@@ -526,12 +636,21 @@ config_read_file (const char *file_path)
         
         for (j = 0; j < 9; j++) {
           if ((current_value = g_key_file_get_value(config_file, group_name, events[j], NULL))) {
-            unless (g_str_has_suffix(current_value, "&"))
-              current_value = g_strdup_printf("%s &", current_value);
-              
-            strcpy(window_options[base_idx + i].commands[j], current_value);
+            gchar *cmd_to_use = current_value;
+            gchar *allocated_cmd = NULL;
+            
+            unless (g_str_has_suffix(current_value, "&")) {
+              allocated_cmd = g_strdup_printf("%s &", current_value);
+              cmd_to_use = allocated_cmd;
+            }
+            
+            strncpy(window_options[base_idx + i].commands[j], cmd_to_use, 199);
+            window_options[base_idx + i].commands[j][199] = '\0';
             printf("%s %s : %s (monitor: %s)\n", 
-                  sections[i], events[j], current_value, monitors[m].name);
+                  sections[i], events[j], cmd_to_use, monitors[m].name);
+            
+            g_free(allocated_cmd);
+            g_free(current_value);
           }
         }
       }
@@ -601,80 +720,135 @@ config_read ()
 }
 
 void print_usage() {
-    const char* green_color = "\x1b[32m";
-    const char* reset_color = "\x1b[0m";
-
-    printf("%s", green_color);
-
-    printf("\nUsage: fittsmon [monitor1] [monitor2] ...\n");
-    printf("Example: fittsmon DP-0 HDMI-0\n\n");
-
-    printf("- If no monitors are given, only the primary is used.\n");
-    printf("- If using multiple, list all of them.\n");
-    printf("- Monitor order doesn't matter.\n\n");
-
-    printf("Config: Edit ~/.config/fittsmon/fittsmonrc to add actions.\n");
-    printf("Example section:\n\n");
-    printf("  [DP-0-TopCenter]\n");
-    printf("  LeftButton=notify-send \"Clicked\"\n");
-    printf("  WheelUp=amixer -D pulse set Master 5%%+\n");
-    printf("  Enter=\n");
-    printf("  Leave=\n\n");
-
-    printf("Use 'fittsmon --list' to show monitor names.\n");
-    printf("Use 'fittsmon --help' to show this message.\n\n");
-
-    printf("Available Positions:\n");
-    printf("  Corners: TopLeft, TopRight, BottomLeft, BottomRight\n");
-    printf("  Edges:   TopCenter, BottomCenter, Left, Right\n\n");
-
-    printf("Available Events:\n");
-    printf("  Mouse Buttons: LeftButton, RightButton, MiddleButton\n");
-    printf("  Wheel:         WheelUp, WheelDown, WheelUpOnce, WheelDownOnce\n");
-    printf("  Pointer:       Enter, Leave\n\n");
-
-    printf("%s", reset_color);
+    printf("\n");
+    printf("fittsmon - Map mouse button events on screen corners to commands\n");
+    printf("\n");
+    printf("USAGE:\n");
+    printf("  fittsmon [OPTIONS]\n");
+    printf("  fittsmon [OPTIONS] --monitor monitor_name1 [monitor_name2] ...\n");
+    printf("\n");
+    printf("OPTIONS:\n");
+    printf("  -h, --help                Show this help message\n");
+    printf("  -l, --list                List available monitors\n");
+    printf("  --monitor name ...        Enable specific monitors by name\n");
+    printf("\n");
+    printf("EXAMPLES:\n");
+    printf("  fittsmon                  # Use primary monitor (default)\n");
+    printf("  fittsmon --monitor DP-0   # Use single monitor\n");
+    printf("  fittsmon --monitor DP-0 HDMI-0 eDP-1  # Use multiple monitors\n");
+    printf("  fittsmon --list           # List available monitors\n");
+    printf("\n");
+    printf("CONFIGURATION:\n");
+    printf("  Config file: ~/.config/fittsmon/fittsmonrc\n");
+    printf("  Auto-created on first run\n");
+    printf("\n");
+    printf("AVAILABLE POSITIONS:\n");
+    printf("  TopLeft, TopCenter, TopRight, Right, BottomRight,\n");
+    printf("  BottomCenter, BottomLeft, Left\n");
+    printf("\n");
+    printf("AVAILABLE EVENTS:\n");
+    printf("  LeftButton, RightButton, MiddleButton,\n");
+    printf("  WheelUp, WheelDown, WheelUpOnce, WheelDownOnce,\n");
+    printf("  Enter, Leave\n");
+    printf("\n");
+    printf("CONFIG SYNTAX:\n");
+    printf("  [Position]              # Default for all enabled monitors\n");
+    printf("  LeftButton=command\n");
+    printf("  WheelUp=command\n");
+    printf("\n");
+    printf("  [MonitorName-Position]  # Monitor-specific override\n");
+    printf("  LeftButton=command\n");
+    printf("\n");
+    printf("EXAMPLE CONFIG:\n");
+    printf("  [TopRight]\n");
+    printf("  WheelUp=amixer -q sset Master 2+\n");
+    printf("  WheelDown=amixer -q sset Master 2-\n");
+    printf("  RightButton=amixer -q sset Master toggle\n");
+    printf("\n");
+    printf("  [DP-0-BottomRight]\n");
+    printf("  LeftButton=notify-send 'DP-0 Bottom Right Clicked'\n");
+    printf("\n");
+    printf("NOTES:\n");
+    printf("  - Commands are executed in the background with '&' appended\n");
+    printf("  - Commands containing shell metacharacters are blocked for security\n");
+    printf("  - WheelUpOnce/WheelDownOnce execute only once every 2+ seconds\n");
+    printf("\n");
 }
 
 
-
-
-int main(int argc, char* argv[])
+int
+main(int argc, char* argv[])
 {
   xcb_connection_t *connection;
   xcb_screen_t *screen;
   int i;
   
+  /* open connection to X server. */
   connection = xcb_connect(NULL, NULL);
+  
   if (xcb_connection_has_error(connection)) {
     fprintf(stderr, "Failed to connect to X server\n");
     return 1;
   }
   
+  /* get screen */
   screen = xcb_setup_roots_iterator(xcb_get_setup(connection)).data;
-
-  /* Always detect monitors first */
+  
+  /* Get all monitors */
   monitor_count = get_all_monitors(connection, screen);
-
-  /* Command line processing */
+  
+  /* Process command line arguments */
+  int any_monitor_enabled = 0;
+  
   if (argc > 1) {
+    /* Check for help or list command */
     if (strcmp(argv[1], "--help") == 0 || strcmp(argv[1], "-h") == 0) {
       print_usage();
+      print_monitor_list();
+      xcb_disconnect(connection);
       return 0;
     }
-
+    
     if (strcmp(argv[1], "--list") == 0 || strcmp(argv[1], "-l") == 0) {
       print_monitor_list();
       xcb_disconnect(connection);
       return 0;
     }
-
-    /* Enable specified monitors */
-    for (i = 1; i < argc; i++) {
-      enable_monitor_by_name(argv[i]);
+    
+    /* Check for --monitor flag */
+    if (strcmp(argv[1], "--monitor") == 0) {
+      if (argc < 3) {
+        fprintf(stderr, "Error: --monitor requires at least one monitor name\n");
+        print_usage();
+        xcb_disconnect(connection);
+        return 1;
+      }
+      /* Enable specified monitors after --monitor flag */
+      for (i = 2; i < argc; i++) {
+        enable_monitor_by_name(argv[i]);
+        any_monitor_enabled = 1;
+      }
+      
+      if (!any_monitor_enabled) {
+        fprintf(stderr, "Error: No valid monitors specified after --monitor\n");
+        xcb_disconnect(connection);
+        return 1;
+      }
+    } else {
+      /* Legacy behavior: treat all args as monitor names (for backward compatibility) */
+      for (i = 1; i < argc; i++) {
+        enable_monitor_by_name(argv[i]);
+        any_monitor_enabled = 1;
+      }
+      
+      if (!any_monitor_enabled) {
+        fprintf(stderr, "Error: No valid monitors specified\n");
+        xcb_disconnect(connection);
+        return 1;
+      }
     }
   } else {
-    /* No arguments, enable primary monitor or fallback */
+    /* No arguments, enable primary monitor or first monitor (default) */
     int primary_found = 0;
     for (i = 0; i < monitor_count; i++) {
       if (monitors[i].primary) {
@@ -684,23 +858,30 @@ int main(int argc, char* argv[])
         break;
       }
     }
-
+    
     if (!primary_found && monitor_count > 0) {
       monitors[0].enabled = 1;
       printf("No primary monitor found, using first monitor: %s\n", monitors[0].name);
     }
   }
-
-  /* Continue normal setup */
+  
+  /* Initialize each enabled monitor */
   for (i = 0; i < monitor_count; i++) {
     if (monitors[i].enabled) {
       init_options(i);
     }
   }
-
+  
+  /* Read configuration */
   config_read();
+  
+  /* Create windows for all enabled monitors */
   server_create_windows(connection, screen);
+  
+  /* Event loop */
   server_event_loop(connection);
+  
+  /* Close connection to server */
   xcb_disconnect(connection);
   
   return 0;

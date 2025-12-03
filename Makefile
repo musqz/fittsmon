@@ -17,10 +17,16 @@ OBJS = fittsmon.o
 TARGET = fittsmon
 
 # Configuration file to be installed
-CONFIG_FILE := fittsmonrc
-DEST_DIR := ~/.config/fittsmon/
-DEST_FILE := $(DEST_DIR)$(CONFIG_FILE)
+CONFIG_FILE := fittsmonrc_example
+DEST_DIR := ~/.config/fittsmon
+DEST_FILE := $(DEST_DIR)/fittsmonrc
+
+# Installation directories
 INSTALL_DIR := /usr/local/bin
+MAN_INSTALL_DIR := /usr/local/share/man/man1
+
+# Man page file
+MAN_PAGE := fittsmon.1
 
 all: $(TARGET)
 
@@ -41,3 +47,16 @@ install:
 	@echo "Installing executable to $(INSTALL_DIR)/$(TARGET)"
 	@sudo mkdir -p $(INSTALL_DIR)
 	@sudo cp $(TARGET) $(INSTALL_DIR)
+	@echo "Installing man page to $(MAN_INSTALL_DIR)"
+	@sudo mkdir -p $(MAN_INSTALL_DIR)
+	@sudo cp $(MAN_PAGE) $(MAN_INSTALL_DIR)
+	@echo "Installation complete!"
+	@echo "You can now access the manual with: man fittsmon"
+
+uninstall:
+	@echo "Removing executable from $(INSTALL_DIR)"
+	@sudo rm -f $(INSTALL_DIR)/$(TARGET)
+	@echo "Removing man page from $(MAN_INSTALL_DIR)"
+	@sudo rm -f $(MAN_INSTALL_DIR)/$(MAN_PAGE)
+	@echo "Uninstall complete!"
+	@echo "Note: Configuration file in $(DEST_FILE) was not removed"
