@@ -45,7 +45,7 @@ sudo apt-get install libxcb1-dev libxrandr-dev libglib2.0-dev xcb-util-dev
 ## 🛠️ Installation 
 
 ```bash
-git clone https://gitlab.com/muzlabz/fittsmon.git
+git clone https://github.com/musqz/fittsmon.git
 cd fittsmon
 make && make install  
 ```
