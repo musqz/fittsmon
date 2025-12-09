@@ -1,2 +1,12 @@
-2009-03-29
-- first version. contains all planned features.
+# Changelog FITTSMON
+
+## 2025-04-18
+- **Fork-1.0.1: Renamed from FittsTool to FittsMon due to improved monitor management.
+- Force using default monitor.
+- Improved configuration handling.
+- Fixed several bugs related to multi-monitor support.
+
+## 2009-03-29
+- **FittsTool 1.0**: Initial release containing all planned features.
+- Implemented basic corner and edge action binding.
+- Added initial configuration file format.
