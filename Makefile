@@ -25,7 +25,7 @@ DEST_DIR := ~/.config/fittsmon
 DEST_FILE := $(DEST_DIR)/fittsmonrc
 
 # Installation directories
-INSTALL_DIR := /usr/local/bin
+INSTALL_DIR := /usr/bin
 MAN_INSTALL_DIR := /usr/local/share/man/man1
 MAN_PAGE := fittsmon.1
 
