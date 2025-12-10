@@ -462,7 +462,7 @@ can_execute (const int corner, int direction)
   time(&current_time);
   diff = (long int) current_time - (long int) *last_exec;
   
-  if ( !last_exec || ( diff > 2 ) ) {
+  if ( diff > 2 ) {
     *last_exec = current_time;
     return 1;
   }
