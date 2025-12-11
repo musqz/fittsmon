@@ -1,0 +1,61 @@
+# Default configuration for all enabled monitors
+# Second monitor
+
+[DP-0-TopCenter]
+WheelUp=amixer -D pulse set Master 5%+
+WheelDown=amixer -D pulse set Master 5%-
+MiddleButton=mabox-terminal
+RightButton=pactl set-sink-mute @DEFAULT_SINK@ toggle
+LeftButton=quake-radio
+
+[DP-0-TopRight]
+Enter=skippy-xd  --expose
+
+[DP-0-TopLeft]
+Enter=mabox-terminal
+
+[DP-0-BottomCenter]
+MiddleButton=skippy-xd  --paging
+RightButton=skippy-xd  --expose 
+LeftButton=skippy-xd  --wm-class Navigator  
+
+[DP-0-BottomRight]
+MiddleButton=skippy-xd-send-to-philips
+
+# Primary monitor
+[TopCenter]
+WheelUp=amixer -D pulse set Master 5%+ 
+WheelDown=amixer -D pulse set Master 5%- 
+MiddleButton=mabox-terminal
+RightButton=pactl set-sink-mute @DEFAULT_SINK@ toggle
+LeftButton=quake-radio
+
+[TopLeft]
+WheelUpOnce=skippy-xd  --wm-class Navigator
+WheelDownOnce=skippy-xd   --wm-class Terminator
+RightButton=skippy-xd  --expose --desktop -1 --next
+LeftButton=skippy-xd  --paging  
+
+[TopRight]
+Enter=mabox-terminal
+
+[BottomCenter]
+WheelUp=skippy-xd  --expose --desktop -1 --next
+MiddleButton=skippy-xd-tiling  
+LeftButton=skippy-xd  --paging
+
+[BottomRight]
+Enter=openbox-toggle-hide-unhide
+
+[BottomLeft]
+WheelUpOnce=skippy-xd --wm-class 'Navigator'
+WheelDownOnce=skippy-xd --wm-class 'Terminator'   
+MiddleButton=skippy-xd-send-to-dell
+RightButton=skippy-xd --expose
+LeftButton=skippy-xd --paging
+
+[Left]
+MiddleButton=skippy-xd --expose
+RightButton=skippy-xd-send-active-to-ws
+LeftButton=skippy-xd-multiselect
+
