@@ -53,6 +53,13 @@ On first run, a sample config will be created at:
 
 ---
 
+## ⚠️ Important: Set Primary Monitor First
+
+Before using fittsmon, ensure your primary monitor is correctly set as primary in your display settings.
+
+**Why this matters:** The configuration file relies on the primary monitor being designated correctly. If it's not set properly, fittsmon won't read the settings correctly.
+
+
 ## 🚀 Usage
 
 ### Start FittsMon with primary monitor (default)
