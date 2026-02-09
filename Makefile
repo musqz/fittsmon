@@ -10,10 +10,7 @@ XCB_LIBS := $(shell pkg-config --libs xcb x11 xcb-randr)
 
 LDFLAGS += -lm $(GLIB_LIBS) $(XCB_LIBS)
 
-# Read version from version.txt
-FITTSMON_VERSION := $(shell cat version.txt))
-
-# Object files
+# Define the object files
 OBJS = fittsmon.o
 
 # Target executable
@@ -25,34 +22,24 @@ DEST_DIR := ~/.config/fittsmon
 DEST_FILE := $(DEST_DIR)/fittsmonrc
 
 # Installation directories
-INSTALL_DIR := /usr/bin
+INSTALL_DIR := /usr/local/bin
 MAN_INSTALL_DIR := /usr/local/share/man/man1
+
+# Man page file
 MAN_PAGE := fittsmon.1
 
-# Default target builds binary and man page
-.PHONY: all
-all: $(TARGET) $(MAN_PAGE)
+all: $(TARGET)
 
-# Build the executable
 $(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
-# Compile object files
 %.o: %.c
 	$(CC) $(CFLAGS) $(GLIB_CFLAGS) $(XCB_CFLAGS) -c -o $@ $<
 
-# Generate the man page from template
-$(MAN_PAGE): fittsmon.1.in version.txt
-	sed "s/@VERSION@/$(FITTSMON_VERSION)/g" $< > $@
-
-# Clean build artifacts
-.PHONY: clean
 clean:
-	rm -f $(TARGET) $(OBJS) $(MAN_PAGE)
+	rm -f $(TARGET) $(OBJS)
 
-# Install executable, config, and man page
-.PHONY: install
-install: all
+install:
 	@echo "Creating destination directory if it does not exist: $(DEST_DIR)"
 	@mkdir -p $(DEST_DIR)
 	
@@ -74,8 +61,7 @@ install: all
 	@echo "Installation complete!"
 	@echo "You can now access the manual with: man fittsmon"
 
-# Uninstall executable and man page
-.PHONY: uninstall
+
 uninstall:
 	@echo "Removing executable from $(INSTALL_DIR)"
 	@sudo rm -f $(INSTALL_DIR)/$(TARGET)

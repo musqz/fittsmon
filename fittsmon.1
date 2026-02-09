@@ -1,0 +1,282 @@
+.TH fittsmon 1 "November 2025" "fittsmon 1.1.1" "User Commands"
+.SH NAME
+fittsmon \- map mouse button events on screen corners to commands
+
+.SH SYNOPSIS
+.B fittsmon
+[\fIOPTIONS\fR]
+.br
+.B fittsmon
+\-\-monitor \fImonitor_name1\fR [\fImonitor_name2\fR] ...
+
+.SH DESCRIPTION
+.B fittsmon
+is a lightweight X11 utility that maps mouse button events and cursor movements in screen corners
+to configurable shell commands. It supports multiple monitors through the RandR (Resize and Rotate)
+extension and is particularly useful on Linux systems with multi-monitor setups.
+
+The program creates invisible input-only windows at screen corners (8 zones per monitor) and
+triggers commands based on mouse events:
+.IP "\- Button clicks"
+left, middle, right button presses
+.IP "\- Wheel events"
+scroll up/down, with optional event throttling
+.IP "\- Enter/Leave events"
+cursor entering or leaving corner zones
+
+.B Inspired by Fitts\'s Law,
+which describes the relationship between target size, distance, and movement time.
+
+.SH OPTIONS
+.TP
+.B \-h, \-\-help
+Display help message and usage examples.
+
+.TP
+.B \-l, \-\-list
+List all available monitors detected on the system.
+
+.TP
+.B \-\-monitor \fImonitor_name\fR [\fImonitor_name2\fR] ...
+Enable ONLY the specified monitors by name. Multiple monitor names can be specified.
+Order does not matter.
+.B Important:
+When using --monitor, the primary monitor is NOT automatically enabled.
+Only the monitors explicitly listed will have fittsmon active.
+This is useful for disabling fittsmon on the primary display and using only external
+displays.
+
+.SH ARGUMENTS (legacy, for backward compatibility)
+.TP
+.B monitor_name
+Name of monitor to enable (e.g., DP-0, HDMI-0, eDP-1).
+Multiple monitors can be specified without the --monitor flag for backward compatibility.
+If no monitors are specified, the primary monitor is used by default.
+
+.SH CONFIGURATION
+The configuration file is located at:
+.BR ~/.config/fittsmon/fittsmonrc
+
+On first run, a template configuration file is automatically created if it does
+not exist. Edit this file to define commands for different screen positions and
+mouse events.
+
+.B NOTE:
+All configuration lines in each section should be kept (even if empty) to avoid unexpected behavior.
+
+.SH CONFIGURATION SYNTAX
+
+Configuration uses INI-style format with sections and key-value pairs.
+
+.B Default Configuration (applies to all enabled monitors):
+.RS
+.B [Position]
+.br
+Event=command
+.br
+...
+.RE
+
+.B Monitor-Specific Configuration (overrides defaults):
+.RS
+.B [MonitorName\-Position]
+.br
+Event=command
+.br
+...
+.RE
+
+.B Available Positions:
+.RS
+TopLeft, TopCenter, TopRight, Right, BottomRight, BottomCenter, BottomLeft, Left
+.RE
+
+.B Available Events:
+.RS
+LeftButton, RightButton, MiddleButton,
+.br
+WheelUp, WheelDown, WheelUpOnce, WheelDownOnce,
+.br
+Enter, Leave
+.RE
+
+.SH EXAMPLES
+
+.B Basic usage with primary monitor:
+.RS
+fittsmon
+.RE
+
+.B Use specific monitors with --monitor flag:
+.RS
+fittsmon \-\-monitor DP-0 HDMI-0
+.RE
+
+.B Use specific monitors (legacy syntax, still supported):
+.RS
+fittsmon DP-0 HDMI-0
+.RE
+
+.B List available monitors:
+.RS
+fittsmon \-\-list
+.RE
+
+.B Example configuration file (~/.config/fittsmon/fittsmonrc):
+.RS
+.nf
+# Volume control on primary monitor's top right corner
+[TopRight]
+WheelUp=amixer \-q sset Master 2+
+WheelDown=amixer \-q sset Master 2\-
+RightButton=pactl set\-sink\-mute @DEFAULT_SINK@ toggle
+LeftButton=xterm \-C alsamixer
+WheelUpOnce=
+WheelDownOnce=
+MiddleButton=
+Enter=
+Leave=
+
+# Monitor-specific configuration
+[DP-0-BottomRight]
+LeftButton=notify\-send "DP-0 clicked"
+WheelUp=xdotool key Page_Up
+WheelDown=
+WheelUpOnce=
+WheelDownOnce=
+MiddleButton=
+RightButton=
+Enter=
+Leave=
+
+[HDMI-0-BottomLeft]
+RightButton=xdotool key Page_Down
+Enter=notify\-send "Entered corner"
+WheelUp=
+WheelDown=
+WheelUpOnce=
+WheelDownOnce=
+MiddleButton=
+LeftButton=
+Leave=
+.fi
+.RE
+
+.SH EVENT TYPES
+
+.TP
+.B LeftButton, MiddleButton, RightButton
+Execute on mouse button click.
+
+.TP
+.B WheelUp, WheelDown
+Execute on each scroll wheel event in that direction.
+
+.TP
+.B WheelUpOnce, WheelDownOnce
+Execute at most once per 2 seconds when scrolling in that direction. Useful for
+page navigation or volume control to avoid rapid repeated command execution.
+
+.TP
+.B Enter
+Execute when cursor enters the corner zone.
+
+.TP
+.B Leave
+Execute when cursor leaves the corner zone.
+
+.SH COMMAND EXECUTION
+
+Commands are executed using the system shell via
+.BR system (3).
+Commands must be simple shell command lines. The following shell metacharacters
+are not allowed to prevent shell injection attacks:
+.RS
+; | & > < ` $ ( ) \\ \" '
+.RE
+
+For complex operations (redirects, pipes, conditionals), create a dedicated shell script
+and call it by name instead.
+
+.SH SECURITY NOTES
+
+.B Command Validation:
+All commands are validated before execution and rejected if they contain dangerous
+shell metacharacters listed above.
+
+This prevents shell injection attacks while still allowing simple commands with options.
+.B Best Practice:
+For complex operations, create shell scripts and reference them:
+.RS
+.nf
+[TopRight]
+LeftButton=/home/user/my_script.sh arg1 arg2
+.fi
+.RE
+
+.SH MONITOR DETECTION
+
+Monitors are detected using the RandR (Resize and Rotate) X11 extension.
+To see detected monitors and their properties, run:
+
+.RS
+fittsmon \-\-list
+.RE
+
+.B Multi-Monitor Configuration:
+All monitor names must be explicitly provided to enable them.
+If no monitor names are given, only the primary monitor is used.
+
+.SH FILES
+
+.TP
+.B ~/.config/fittsmon/fittsmonrc
+User configuration file. Created automatically on first run with a template.
+
+.SH REQUIREMENTS
+
+.B X11 Server:
+fittsmon requires an X11 session. It does not support Wayland.
+
+.B Dependencies:
+Glib 2.0, libxcb, libxrandr
+
+.SH NOTES
+
+.IP "\-" 4
+fittsmon requires an X11 session (not compatible with Wayland).
+
+.IP "\-" 4
+The program runs in the foreground and should be backgrounded or started via
+a session autostart mechanism.
+
+.IP "\-" 4
+To stop fittsmon, use: \fBpkill fittsmon\fR
+
+.IP "\-" 4
+Changes to the configuration file require restarting fittsmon.
+
+.IP "\-" 4
+For autostart, add to .xinitrc, .xprofile, or your desktop environment\'s
+session startup settings:
+.RS
+fittsmon &
+.RE
+
+.SH VERSION
+Version 1.1.1 (November 2025)
+
+Security hardening: buffer overflow fixes, memory leak prevention, and shell-injection
+protection.
+
+.SH AUTHOR
+Current maintainer: Eric Bakker (linuxbirdtweets@duck.com)
+.br
+Modified 2025 to support multiple monitors on Manjaro Linux.
+.br
+Original author: Yasen Atanasov (yasen.atanasov@gmail.com)
+.br
+Forked from fittstool: https://github.com/napcok/fittstool
+
+.SH LICENSE
+GNU General Public License version 2 (GPL-2.0)
