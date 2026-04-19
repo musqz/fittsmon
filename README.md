@@ -46,14 +46,6 @@ cd fittsmon
 make && make install  
 ```
 
-# Arch installation
-
-```
-git clone https://github.com/musqz/fittsmon.git
-cd fittsmon
-makepkg -si
-```
-
 On first run, a sample config will be created at:
 ```
 ~/.config/fittsmon/fittsmonrc
