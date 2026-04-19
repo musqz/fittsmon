@@ -9,7 +9,7 @@ Inspired by [Fitts's Law](https://en.wikipedia.org/wiki/Fitts%27s_law), it trans
 
 - **Bind mouse buttons** and wheel events to commands
 - **Multiple event types**: button clicks, scroll wheel (throttled and non-throttled), cursor enter/leave
-- **Minimal dependencies**, no daemon or tray clutter
+- **Minimal dependencies**
 - **Easy-to-edit** INI-style configuration
 - **Multi-Monitor Support:** Enable fittsmon on specific monitors or all enabled monitors
 - **Security hardening:** Command validation prevents shell injection attacks
