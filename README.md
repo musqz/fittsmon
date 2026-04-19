@@ -38,12 +38,20 @@ sudo apt-get install libxcb1-dev libxrandr-dev libglib2.0-dev xcb-util-dev
 
 ---
 
-## 🛠️ Installation 
+## 🛠️ Manual Installation 
 
 ```bash
 git clone https://github.com/musqz/fittsmon.git
 cd fittsmon
 make && make install  
+```
+
+# ARCH Installation
+
+```
+git clone https://github.com/musqz/fittsmon.git
+cd fittsmon
+makepkg -si
 ```
 
 On first run, a sample config will be created at:
