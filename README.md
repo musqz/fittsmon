@@ -46,7 +46,7 @@ cd fittsmon
 make && make install  
 ```
 
-# ARCH Installation
+# Arch installation
 
 ```
 git clone https://github.com/musqz/fittsmon.git
