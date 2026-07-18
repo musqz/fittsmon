@@ -1,0 +1,14 @@
+pkgbase = fittsmon
+	pkgdesc = Lightweight X11 utility to bind mouse actions to screen corners and edges (multi-monitor)
+	pkgver = 1.1.0
+	pkgrel = 1
+	url = https://github.com/musqz/fittsmon
+	arch = x86_64
+	license = GPL-2.0-or-later
+	depends = glib2
+	depends = libx11
+	depends = libxcb
+	source = fittsmon-1.1.0.tar.gz::https://github.com/musqz/fittsmon/archive/refs/tags/v1.1.0.tar.gz
+	sha256sums = SKIP
+
+pkgname = fittsmon
