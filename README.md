@@ -26,14 +26,14 @@ Inspired by [Fitts's Law](https://en.wikipedia.org/wiki/Fitts%27s_law), it trans
 ### Arch / Manjaro (pacman)
 
 ```bash
-sudo pacman -S libxcb libxrandr glib2 xcb-proto
+sudo pacman -S libxcb libx11 glib2
 ```
 
 ### Debian / Ubuntu (apt)
 
 ```bash
 sudo apt-get update
-sudo apt-get install libxcb1-dev libxrandr-dev libglib2.0-dev xcb-util-dev
+sudo apt-get install libxcb1-dev libx11-dev libxcb-randr0-dev libglib2.0-dev
 ```
 
 ---
@@ -49,6 +49,18 @@ make && make install
 On first run, a sample config will be created at:
 ```
 ~/.config/fittsmon/fittsmonrc
+```
+
+---
+
+## 🏹 Arch Installation
+
+Build and install with `makepkg` from `packaging/`:
+
+```bash
+git clone https://github.com/musqz/fittsmon.git
+cd fittsmon/packaging
+makepkg -si
 ```
 
 ---

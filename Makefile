@@ -43,10 +43,8 @@ clean:
 
 install: $(TARGET)
 	install -Dm755 $(TARGET)        $(DESTDIR)$(BINDIR)/$(TARGET)
-	install -Dm644 $(MAN_PAGE)      $(DESTDIR)$(MANDIR)/$(MAN_PAGE).gz
-	gzip -nf                        $(DESTDIR)$(MANDIR)/$(MAN_PAGE).gz 2>/dev/null; \
-	  install -Dm644 $(MAN_PAGE)    $(DESTDIR)$(MANDIR)/$(MAN_PAGE) && \
-	  gzip -nf                      $(DESTDIR)$(MANDIR)/$(MAN_PAGE) || true
+	install -Dm644 $(MAN_PAGE)      $(DESTDIR)$(MANDIR)/$(MAN_PAGE)
+	gzip -nf                        $(DESTDIR)$(MANDIR)/$(MAN_PAGE)
 	install -Dm644 $(CONFIG_FILE)   $(DESTDIR)$(DATADIR)/$(CONFIG_FILE)
 	install -Dm644 COPYING          $(DESTDIR)$(LICENSEDIR)/COPYING
 	@echo ""
