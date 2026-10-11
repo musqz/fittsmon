@@ -10,7 +10,7 @@ GLIB_LIBS   := $(shell pkg-config --libs   glib-2.0)
 XCB_CFLAGS  := $(shell pkg-config --cflags xcb x11 xcb-randr)
 XCB_LIBS    := $(shell pkg-config --libs   xcb x11 xcb-randr)
 
-LDFLAGS += -lm $(GLIB_LIBS) $(XCB_LIBS)
+LIBS     = -lm $(GLIB_LIBS) $(XCB_LIBS)
 
 OBJS   = fittsmon.o
 TARGET = fittsmon
@@ -32,14 +32,36 @@ MAN_PAGE    = fittsmon.1
 
 all: $(TARGET)
 
+# Wayland port (wlroots compositors: labwc, sway, ...). Build with `make wl`.
+WL_TARGET  = fittsmon-wl
+WL_PROTO   = wlr-layer-shell-unstable-v1 xdg-shell
+WL_GEN     = $(foreach p,$(WL_PROTO),$(p)-client-protocol.h $(p)-protocol.c)
+WL_CFLAGS  = $(shell pkg-config --cflags wayland-client)
+WL_LIBS    = $(shell pkg-config --libs   wayland-client)
+WL_OBJS    = fittsmon-wl.o $(foreach p,$(WL_PROTO),$(p)-protocol.o)
+
+wl: $(WL_TARGET)
+
+%-client-protocol.h: protocols/%.xml
+	wayland-scanner client-header $< $@
+
+%-protocol.c: protocols/%.xml
+	wayland-scanner private-code $< $@
+
+fittsmon-wl.o: fittsmon-wl.c wlr-layer-shell-unstable-v1-client-protocol.h
+	$(CC) $(CFLAGS) $(GLIB_CFLAGS) $(WL_CFLAGS) -c -o $@ $<
+
+$(WL_TARGET): $(WL_OBJS)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) -lm $(GLIB_LIBS) $(WL_LIBS)
+
 $(TARGET): $(OBJS)
-	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(LIBS)
 
 %.o: %.c
 	$(CC) $(CFLAGS) $(GLIB_CFLAGS) $(XCB_CFLAGS) -c -o $@ $<
 
 clean:
-	rm -f $(TARGET) $(OBJS)
+	rm -f $(TARGET) $(OBJS) $(WL_TARGET) $(WL_OBJS) $(WL_GEN)
 
 install: $(TARGET)
 	install -Dm755 $(TARGET)        $(DESTDIR)$(BINDIR)/$(TARGET)
@@ -65,4 +87,4 @@ uninstall:
 	@echo "Uninstall complete."
 	@echo "Note: ~/.config/fittsmon/fittsmonrc was not removed."
 
-.PHONY: all clean install uninstall
+.PHONY: all wl clean install uninstall
