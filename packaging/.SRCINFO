@@ -9,6 +9,6 @@ pkgbase = fittsmon
 	depends = libx11
 	depends = libxcb
 	source = fittsmon-1.1.1.tar.gz::https://github.com/musqz/fittsmon/archive/refs/tags/v1.1.1.tar.gz
-	sha256sums = SKIP
+	sha256sums = 545fe83da1d9bb21ac167cd36109ad32885bbd55123b64b203a7ade911d8671f
 
 pkgname = fittsmon
