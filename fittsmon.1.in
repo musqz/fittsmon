@@ -11,7 +11,7 @@ is a lightweight X11 utility that maps mouse button events and
 cursor movements in screen corners to configurable shell commands. It
 supports multi-monitor setups through the X11 RandR (Resize and Rotate)
 extension. The program creates invisible input-only windows at each
-screen corner (8 zones per monitor) and triggers commands based on mouse
+screen corner or edge that has a command configured and triggers commands based on mouse
 events detected in those zones.
 .IP "\fI- Button clicks\fR"
 left, middle, right button presses

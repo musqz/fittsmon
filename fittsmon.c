@@ -598,7 +598,9 @@ config_read_file (const char *file_path)
         window_options[base_idx + i].enabled = 1;
         
         for (j = 0; j < 9; j++) {
-          if ((current_value = g_key_file_get_value(config_file, group_name, events[j], NULL))) {
+          if ((current_value = g_key_file_get_value(config_file, group_name, events[j], NULL)) && !*current_value) {
+            g_free(current_value);
+          } else if (current_value) {
             gchar *cmd_to_use = current_value;
             gchar *allocated_cmd = NULL;
             
@@ -635,7 +637,9 @@ config_read_file (const char *file_path)
         window_options[base_idx + i].enabled = 1;
         
         for (j = 0; j < 9; j++) {
-          if ((current_value = g_key_file_get_value(config_file, group_name, events[j], NULL))) {
+          if ((current_value = g_key_file_get_value(config_file, group_name, events[j], NULL)) && !*current_value) {
+            g_free(current_value);
+          } else if (current_value) {
             gchar *cmd_to_use = current_value;
             gchar *allocated_cmd = NULL;
             
@@ -874,6 +878,20 @@ main(int argc, char* argv[])
   
   /* Read configuration */
   config_read();
+  
+  /* A zone without commands would only swallow clicks meant for the window below */
+  int zones_used = 0;
+  for (i = 0; i < 8 * monitor_count; i++) {
+    int used = 0;
+    for (int j = 0; j < 9; j++) if (is_safe_command(window_options[i].commands[j])) used = 1;
+    window_options[i].enabled = used;
+    zones_used += used;
+  }
+  unless (zones_used) {
+    fprintf(stderr, "No usable commands configured for the selected monitors, exiting\n");
+    xcb_disconnect(connection);
+    return 1;
+  }
   
   /* Create windows for all enabled monitors */
   server_create_windows(connection, screen);
