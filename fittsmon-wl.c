@@ -337,6 +337,9 @@ is_safe_command (const char *cmd)
     while (len > 0 && (buf[len-1] == ' ' || buf[len-1] == '\t')) buf[--len] = '\0';
   }
 
+  /* "LeftButton=" is stored as " &": nothing left to run */
+  if (len == 0) return 0;
+
   const char *dangerous = ";|><`$()\\\"'";
   if (strcspn(buf, dangerous) != strlen(buf)) {
     fprintf(stderr, "Warning: Potentially dangerous command blocked (contains shell metacharacters): %s\n", cmd);
@@ -381,7 +384,10 @@ config_read_file (const char *file_path)
 
   config_file = g_key_file_new();
 
-  unless (g_key_file_load_from_file(config_file, file_path, G_KEY_FILE_NONE, NULL)) {
+  GError *error = NULL;
+  unless (g_key_file_load_from_file(config_file, file_path, G_KEY_FILE_NONE, &error)) {
+    fprintf(stderr, "Cannot read %s: %s\n", file_path, error->message);
+    g_error_free(error);
     g_key_file_free(config_file);
     return;
   }
@@ -555,6 +561,20 @@ main(int argc, char* argv[])
   for (i = 0; i < monitor_count; i++) init_options(i);
 
   config_read();
+
+  /* A zone without commands would only swallow clicks meant for the surface below */
+  int zones_used = 0;
+  for (i = 0; i < 8 * monitor_count; i++) {
+    int used = 0;
+    for (int j = 0; j < 9; j++) if (is_safe_command(zones[i].commands[j])) used = 1;
+    zones[i].enabled = used;
+    zones_used += used;
+  }
+  unless (zones_used) {
+    fprintf(stderr, "No usable commands configured for the selected monitors, exiting\n");
+    return 1;
+  }
+
   create_zones();
 
   while (wl_display_dispatch(display) != -1) { }
