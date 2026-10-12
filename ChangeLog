@@ -1,26 +1,47 @@
 # Changelog FITTSMON
 
-## Unreleased
+Versions link to their GitHub release.
+
+## [Unreleased]
+
+### Added
 - fittsmon-wl: rebuild the zones and re-read the config when a monitor is plugged or unplugged.
-- fittsmon-wl: mention Wayland in the README.
 
-## 2026-10-12
-- **V1.2.0**: Add fittsmon-wl, a Wayland build for wlroots compositors (labwc, sway, niri, Hyprland).
+### Changed
+- README: mention Wayland.
+
+## [1.2.0] - 2026-10-12
+
+### Added
+- fittsmon-wl: Wayland build for wlroots compositors (labwc, sway, niri, Hyprland).
 - `make` and `make install` build and install both fittsmon and fittsmon-wl.
-- Fix the duplicate `[Left]` group in fittsmonrc_example.
-- Remove fittsmon.1.in.
 
-## 2026-10-11
-- **V1.1.1**: Pass clicks through screen corners and edges that have no command configured.
+### Fixed
+- Remove the duplicate `[Left]` group from fittsmonrc_example.
+
+### Removed
+- fittsmon.1.in.
+
+## [1.1.1] - 2026-10-11
+
+### Fixed
+- Pass clicks through screen corners and edges that have no command configured.
 - Exit with a message when no zone has a usable command.
 
-## 2025-04-18
-- **Fork-1.1.0: Renamed from FittsTool to FittsMon due to improved monitor management.
-- Force using default monitor.
-- Improved configuration handling.
-- Fixed several bugs related to multi-monitor support.
+## [1.1.0] - 2025-04-18
 
-## 2009-03-29
-- **FittsTool 1.0**: Initial release containing all planned features.
-- Implemented basic corner and edge action binding.
-- Added initial configuration file format.
+### Changed
+- Rename FittsTool to FittsMon.
+- Force using the default monitor.
+- Improve configuration handling.
+
+### Fixed
+- Several bugs related to multi-monitor support.
+
+## FittsTool 1.0 - 2009-03-29
+- Corner and edge action binding with a configuration file.
+
+[Unreleased]: https://github.com/musqz/fittsmon/compare/v1.2.0...master
+[1.2.0]: https://github.com/musqz/fittsmon/releases/tag/v1.2.0
+[1.1.1]: https://github.com/musqz/fittsmon/releases/tag/v1.1.1
+[1.1.0]: https://github.com/musqz/fittsmon/releases/tag/v1.1.0
