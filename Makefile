@@ -48,7 +48,7 @@ wl: $(WL_TARGET)
 %-protocol.c: protocols/%.xml
 	wayland-scanner private-code $< $@
 
-fittsmon-wl.o: fittsmon-wl.c wlr-layer-shell-unstable-v1-client-protocol.h
+fittsmon-wl.o: fittsmon-wl.c wlr-layer-shell-unstable-v1-client-protocol.h xdg-shell-client-protocol.h
 	$(CC) $(CFLAGS) $(GLIB_CFLAGS) $(WL_CFLAGS) -c -o $@ $<
 
 $(WL_TARGET): $(WL_OBJS)
