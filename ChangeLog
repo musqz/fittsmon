@@ -1,5 +1,9 @@
 # Changelog FITTSMON
 
+## Unreleased
+- fittsmon-wl: rebuild the zones and re-read the config when a monitor is plugged or unplugged.
+- fittsmon-wl: mention Wayland in the README.
+
 ## 2026-10-12
 - **V1.2.0**: Add fittsmon-wl, a Wayland build for wlroots compositors (labwc, sway, niri, Hyprland).
 - `make` and `make install` build and install both fittsmon and fittsmon-wl.
