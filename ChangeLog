@@ -1,5 +1,11 @@
 # Changelog FITTSMON
 
+## 2026-10-12
+- **V1.2.0**: Add fittsmon-wl, a Wayland build for wlroots compositors (labwc, sway, niri, Hyprland).
+- `make` and `make install` build and install both fittsmon and fittsmon-wl.
+- Fix the duplicate `[Left]` group in fittsmonrc_example.
+- Remove fittsmon.1.in.
+
 ## 2026-10-11
 - **V1.1.1**: Pass clicks through screen corners and edges that have no command configured.
 - Exit with a message when no zone has a usable command.
