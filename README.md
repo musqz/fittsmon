@@ -1,6 +1,6 @@
-# FittsMon – Mouse Corner Action Tool for X11 (Multi-Monitor Support)
+# FittsMon – Mouse Corner Action Tool for X11 and Wayland (Multi-Monitor Support)
 
-**FittsMon** is a lightweight X11 utility that binds mouse actions (clicks, scrolls, enter/leave) to screen corners and edges, triggering custom commands.
+**FittsMon** is a lightweight utility for X11 and Wayland that binds mouse actions (clicks, scrolls, enter/leave) to screen corners and edges, triggering custom commands.
 Inspired by [Fitts's Law](https://en.wikipedia.org/wiki/Fitts%27s_law), it transforms screen edges into powerful productivity zones — now with full multi-monitor support.
 
 ---
@@ -9,6 +9,7 @@ Inspired by [Fitts's Law](https://en.wikipedia.org/wiki/Fitts%27s_law), it trans
 
 - **Bind mouse buttons** and wheel events to commands
 - **Multiple event types**: button clicks, scroll wheel (throttled and non-throttled), cursor enter/leave
+- **X11 and Wayland:** `fittsmon` for X11, `fittsmon-wl` for wlroots compositors (labwc, sway, niri, Hyprland)
 - **Minimal dependencies**
 - **Easy-to-edit** INI-style configuration
 - **Multi-Monitor Support:** Enable fittsmon on specific monitors or all enabled monitors
@@ -174,6 +175,12 @@ fittsmon &
 
 # Specific monitors
 fittsmon --monitor DP-0 HDMI-0 &
+```
+
+On Wayland, use `fittsmon-wl` in your compositor's autostart. It takes the same options:
+
+```bash
+fittsmon-wl --monitor eDP-1 &
 ```
 
 Or add to your desktop environment's session startup settings.
