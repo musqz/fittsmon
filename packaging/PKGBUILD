@@ -2,11 +2,11 @@
 pkgname=fittsmon
 pkgver=1.1.1
 pkgrel=1
-pkgdesc="Lightweight X11 utility to bind mouse actions to screen corners and edges (multi-monitor)"
+pkgdesc="Lightweight X11/Wayland utility to bind mouse actions to screen corners and edges (multi-monitor)"
 arch=('x86_64')
 url="https://github.com/musqz/fittsmon"
 license=('GPL-2.0-or-later')
-depends=('glib2' 'libx11' 'libxcb')
+depends=('glib2' 'libx11' 'libxcb' 'wayland')
 source=("${pkgname}-${pkgver}.tar.gz::${url}/archive/refs/tags/v${pkgver}.tar.gz")
 sha256sums=('545fe83da1d9bb21ac167cd36109ad32885bbd55123b64b203a7ade911d8671f')
 

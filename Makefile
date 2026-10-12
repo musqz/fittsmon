@@ -30,15 +30,15 @@ MAN_PAGE    = fittsmon.1
 
 # -----------------------------------------------------------------------
 
-all: $(TARGET)
-
-# Wayland port (wlroots compositors: labwc, sway, ...). Build with `make wl`.
+# Wayland port (wlroots compositors: labwc, sway, ...). `make wl` builds only this.
 WL_TARGET  = fittsmon-wl
 WL_PROTO   = wlr-layer-shell-unstable-v1 xdg-shell
 WL_GEN     = $(foreach p,$(WL_PROTO),$(p)-client-protocol.h $(p)-protocol.c)
 WL_CFLAGS  = $(shell pkg-config --cflags wayland-client)
 WL_LIBS    = $(shell pkg-config --libs   wayland-client)
 WL_OBJS    = fittsmon-wl.o $(foreach p,$(WL_PROTO),$(p)-protocol.o)
+
+all: $(TARGET) $(WL_TARGET)
 
 wl: $(WL_TARGET)
 
@@ -63,15 +63,16 @@ $(TARGET): $(OBJS)
 clean:
 	rm -f $(TARGET) $(OBJS) $(WL_TARGET) $(WL_OBJS) $(WL_GEN)
 
-install: $(TARGET)
+install: $(TARGET) $(WL_TARGET)
 	install -Dm755 $(TARGET)        $(DESTDIR)$(BINDIR)/$(TARGET)
+	install -Dm755 $(WL_TARGET)     $(DESTDIR)$(BINDIR)/$(WL_TARGET)
 	install -Dm644 $(MAN_PAGE)      $(DESTDIR)$(MANDIR)/$(MAN_PAGE)
 	gzip -nf                        $(DESTDIR)$(MANDIR)/$(MAN_PAGE)
 	install -Dm644 $(CONFIG_FILE)   $(DESTDIR)$(DATADIR)/$(CONFIG_FILE)
 	install -Dm644 COPYING          $(DESTDIR)$(LICENSEDIR)/COPYING
 	@echo ""
 	@echo "Installation complete."
-	@echo "  Binary : $(DESTDIR)$(BINDIR)/$(TARGET)"
+	@echo "  Binaries: $(DESTDIR)$(BINDIR)/$(TARGET) (X11), $(DESTDIR)$(BINDIR)/$(WL_TARGET) (Wayland)"
 	@echo "  Man    : $(DESTDIR)$(MANDIR)/$(MAN_PAGE).gz"
 	@echo "  Example config: $(DESTDIR)$(DATADIR)/$(CONFIG_FILE)"
 	@echo ""
@@ -81,6 +82,7 @@ install: $(TARGET)
 
 uninstall:
 	rm -f  $(DESTDIR)$(BINDIR)/$(TARGET)
+	rm -f  $(DESTDIR)$(BINDIR)/$(WL_TARGET)
 	rm -f  $(DESTDIR)$(MANDIR)/$(MAN_PAGE).gz
 	rm -f  $(DESTDIR)$(DATADIR)/$(CONFIG_FILE)
 	rm -f  $(DESTDIR)$(LICENSEDIR)/COPYING

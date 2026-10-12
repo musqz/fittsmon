@@ -22,18 +22,19 @@ Inspired by [Fitts's Law](https://en.wikipedia.org/wiki/Fitts%27s_law), it trans
 
 - `xcb`, `x11`, `xcb-randr` (X11 libraries)
 - `glib-2.0` (GLib library)
+- `wayland-client` and `wayland-scanner` (build-time, for `fittsmon-wl`)
 
 ### Arch / Manjaro (pacman)
 
 ```bash
-sudo pacman -S libxcb libx11 glib2
+sudo pacman -S libxcb libx11 glib2 wayland
 ```
 
 ### Debian / Ubuntu (apt)
 
 ```bash
 sudo apt-get update
-sudo apt-get install libxcb1-dev libx11-dev libxcb-randr0-dev libglib2.0-dev
+sudo apt-get install libxcb1-dev libx11-dev libxcb-randr0-dev libglib2.0-dev libwayland-dev libwayland-bin
 ```
 
 ---
@@ -45,6 +46,9 @@ git clone https://github.com/musqz/fittsmon.git
 cd fittsmon
 make && make install  
 ```
+
+`make install` installs `fittsmon` (X11) and `fittsmon-wl` (Wayland, wlroots compositors).  
+Run the one that matches your session.
 
 On first run, a sample config will be created at:
 ```
@@ -125,8 +129,7 @@ Event=command
 ### Positions
 
 - Corners: `TopLeft`, `TopRight`, `BottomLeft`, `BottomRight`
-- Edges: `Top`, `Bottom`, `Left`, `Right`
-- Center edges: `TopCenter`, `BottomCenter`
+- Edges: `Left`, `Right`, `TopCenter`, `BottomCenter`
 
 ### Events
 

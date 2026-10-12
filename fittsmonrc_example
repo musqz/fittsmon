@@ -20,17 +20,6 @@ LeftButton=
 Enter=
 Leave=
 
-[Left        ]
-WheelUp=
-WheelDown=
-WheelUpOnce=
-WheelDownOnce=
-MiddleButton=
-RightButton=
-LeftButton=
-Enter=
-Leave=
-
 [BottomCenter]
 WheelUp=
 WheelDown=

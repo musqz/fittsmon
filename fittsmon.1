@@ -233,13 +233,23 @@ If no monitor names are given, only the primary monitor is used.
 .B ~/.config/fittsmon/fittsmonrc
 User configuration file. Created automatically on first run with a template.
 
+.SH WAYLAND
+.B fittsmon\-wl
+is the Wayland build. It reads the same configuration file and takes the same
+options. It runs on compositors that support wlr\-layer\-shell (labwc, sway, niri, Hyprland).
+Start it from the compositor autostart.
+
+Zones are created only for positions that have a usable command.
+Other corners pass clicks through to the window below.
+Hotplugged monitors are not detected; restart fittsmon\-wl after changing outputs.
+
 .SH REQUIREMENTS
 
 .B X11 Server:
-fittsmon requires an X11 session. It does not support Wayland.
+fittsmon requires an X11 session. Use fittsmon\-wl on Wayland.
 
 .B Dependencies:
-Glib 2.0, libxcb, libxrandr
+Glib 2.0, libxcb, libxrandr (fittsmon); libwayland\-client (fittsmon\-wl)
 
 .SH NOTES
 
