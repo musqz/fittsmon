@@ -8,7 +8,7 @@ url="https://github.com/musqz/fittsmon"
 license=('GPL-2.0-or-later')
 depends=('glib2' 'libx11' 'libxcb' 'wayland')
 source=("${pkgname}-${pkgver}.tar.gz::${url}/archive/refs/tags/v${pkgver}.tar.gz")
-sha256sums=('545fe83da1d9bb21ac167cd36109ad32885bbd55123b64b203a7ade911d8671f')
+sha256sums=('bb75f606bb57ddccb24e7a630661501f009a8bf02ee3f60d8c45d2df2f943426')
 
 build() {
     cd "${pkgname}-${pkgver}"
