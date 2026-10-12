@@ -63,7 +63,11 @@ typedef struct {
   int scale;
   char name[32];
   int enabled;
+  uint32_t global;  /* registry name, to match global_remove */
 } MonitorInfo;
+
+/* A freed slot has no output; a new output has no mode until its events arrive */
+#define monitor_live(m) ((m)->output && (m)->width > 0)
 
 struct zone zones[8 * MAX_MONITORS];
 MonitorInfo monitors[MAX_MONITORS];
@@ -76,6 +80,10 @@ static struct wl_shm *shm;
 static struct wl_seat *seat;
 static struct zwlr_layer_shell_v1 *layer_shell;
 static struct zone *pointer_zone;  /* zone the pointer is currently in */
+static int ready;                  /* startup done: output changes rebuild the zones */
+static int dirty;                  /* outputs changed, zones need rebuilding */
+static char **sel_names;           /* monitor names from the command line */
+static int sel_count;
 
 int  can_execute (struct zone *z, const int direction);
 int  is_safe_command (const char *cmd);
@@ -109,6 +117,13 @@ output_mode (void *data, struct wl_output *o, uint32_t flags, int32_t w, int32_t
 }
 
 static void
+output_done (void *data, struct wl_output *o)
+{
+  (void)data; (void)o;
+  if (ready) dirty = 1;
+}
+
+static void
 output_scale (void *data, struct wl_output *o, int32_t scale)
 {
   MonitorInfo *m = data;
@@ -125,7 +140,7 @@ output_name (void *data, struct wl_output *o, const char *name)
 }
 
 static const struct wl_output_listener output_listener = {
-  .geometry = noop, .mode = output_mode, .done = noop, .scale = output_scale,
+  .geometry = noop, .mode = output_mode, .done = output_done, .scale = output_scale,
   .name = output_name, .description = noop,
 };
 
@@ -213,21 +228,46 @@ registry_global (void *data, struct wl_registry *r, uint32_t name, const char *i
   } else if (strcmp(iface, wl_seat_interface.name) == 0 && !seat) {
     seat = wl_registry_bind(r, name, &wl_seat_interface, 5);
     wl_seat_add_listener(seat, &seat_listener, NULL);
-  } else if (strcmp(iface, wl_output_interface.name) == 0 && monitor_count < MAX_MONITORS) {
+  } else if (strcmp(iface, wl_output_interface.name) == 0) {
     /* wl_output.name needs version 4 */
     if (version < 4) {
       fprintf(stderr, "Warning: wl_output v%u has no names, skipping output\n", version);
       return;
     }
-    MonitorInfo *m = &monitors[monitor_count++];
+    /* reuse the slot of an unplugged output */
+    MonitorInfo *m = NULL;
+    for (int i = 0; i < monitor_count; i++) {
+      if (!monitors[i].output) { m = &monitors[i]; break; }
+    }
+    if (!m && monitor_count < MAX_MONITORS) m = &monitors[monitor_count++];
+    unless (m) {
+      fprintf(stderr, "Warning: more than %d outputs, ignoring one\n", MAX_MONITORS);
+      return;
+    }
+    memset(m, 0, sizeof(*m));
+    m->global = name;
     m->scale = 1;
     m->output = wl_registry_bind(r, name, &wl_output_interface, 4);
     wl_output_add_listener(m->output, &output_listener, m);
   }
 }
 
+static void
+registry_global_remove (void *data, struct wl_registry *r, uint32_t name)
+{
+  (void)data; (void)r;
+  for (int i = 0; i < monitor_count; i++) {
+    if (monitors[i].output && monitors[i].global == name) {
+      wl_output_release(monitors[i].output);
+      memset(&monitors[i], 0, sizeof(monitors[i]));
+      dirty = 1;
+      return;
+    }
+  }
+}
+
 static const struct wl_registry_listener registry_listener = {
-  .global = registry_global, .global_remove = noop,
+  .global = registry_global, .global_remove = registry_global_remove,
 };
 
 /* Zones */
@@ -254,8 +294,10 @@ layer_configure (void *data, struct zwlr_layer_surface_v1 *ls, uint32_t serial, 
   (void)w; (void)h;
   zwlr_layer_surface_v1_ack_configure(ls, serial);
   if (z->mapped) return;
-  wl_surface_attach(z->surface, make_buffer(z->w, z->h), 0, 0);
+  struct wl_buffer *buf = make_buffer(z->w, z->h);
+  wl_surface_attach(z->surface, buf, 0, 0);
   wl_surface_commit(z->surface);
+  wl_buffer_destroy(buf);
   z->mapped = 1;
 }
 
@@ -352,6 +394,8 @@ is_safe_command (const char *cmd)
 void
 init_options (int monitor_index)
 {
+  unless (monitor_live(&monitors[monitor_index])) return;
+
   int sw = monitors[monitor_index].width / monitors[monitor_index].scale;
   int sh = monitors[monitor_index].height / monitors[monitor_index].scale;
   int base_idx = monitor_index * 8;
@@ -487,9 +531,66 @@ void
 print_monitor_list ()
 {
   printf("Available monitors:\n");
-  for (int i = 0; i < monitor_count; i++)
+  for (int i = 0; i < monitor_count; i++) {
+    unless (monitor_live(&monitors[i])) continue;
     printf("  %s (%dx%d, scale %d)\n", monitors[i].name,
            monitors[i].width, monitors[i].height, monitors[i].scale);
+  }
+}
+
+/* Enable the selected monitors, read the config and create the zones.
+   Returns the number of zones created. */
+static int
+setup_zones (void)
+{
+  int i;
+
+  if (sel_count) {
+    int any = 0;
+    for (i = 0; i < sel_count; i++) {
+      int found = 0;
+      for (int m = 0; m < monitor_count; m++) {
+        if (monitor_live(&monitors[m]) && strcmp(monitors[m].name, sel_names[i]) == 0) { monitors[m].enabled = found = any = 1; }
+      }
+      unless (found) fprintf(stderr, "Warning: Monitor '%s' not found\n", sel_names[i]);
+    }
+    unless (any) print_monitor_list();
+  } else {
+    for (i = 0; i < monitor_count; i++) {
+      if (monitor_live(&monitors[i])) { monitors[i].enabled = 1; break; }
+    }
+  }
+
+  for (i = 0; i < monitor_count; i++) init_options(i);
+
+  config_read();
+
+  /* A zone without commands would only swallow clicks meant for the surface below */
+  int zones_used = 0;
+  for (i = 0; i < 8 * monitor_count; i++) {
+    int used = 0;
+    for (int j = 0; j < 9; j++) if (is_safe_command(zones[i].commands[j])) used = 1;
+    zones[i].enabled = used;
+    zones_used += used;
+  }
+
+  create_zones();
+  return zones_used;
+}
+
+/* An output was plugged or unplugged: drop every zone and start over */
+static void
+rebuild_zones (void)
+{
+  pointer_zone = NULL;
+  for (int i = 0; i < 8 * monitor_count; i++) {
+    if (zones[i].layer_surface) zwlr_layer_surface_v1_destroy(zones[i].layer_surface);
+    if (zones[i].surface) wl_surface_destroy(zones[i].surface);
+  }
+  memset(zones, 0, sizeof(zones));
+  for (int i = 0; i < monitor_count; i++) monitors[i].enabled = 0;
+
+  unless (setup_zones()) fprintf(stderr, "No usable zones after output change\n");
 }
 
 static void
@@ -506,8 +607,6 @@ print_usage ()
 int
 main(int argc, char* argv[])
 {
-  int i;
-
   if (argc > 1 && (strcmp(argv[1], "--help") == 0 || strcmp(argv[1], "-h") == 0)) {
     print_usage();
     return 0;
@@ -541,43 +640,24 @@ main(int argc, char* argv[])
 
   if (argc > 1) {
     int first = strcmp(argv[1], "--monitor") == 0 ? 2 : 1;
-    int any = 0;
-    for (i = first; i < argc; i++) {
-      int found = 0;
-      for (int m = 0; m < monitor_count; m++) {
-        if (strcmp(monitors[m].name, argv[i]) == 0) { monitors[m].enabled = found = any = 1; }
-      }
-      unless (found) fprintf(stderr, "Warning: Monitor '%s' not found\n", argv[i]);
-    }
-    unless (any) {
-      print_monitor_list();
-      return 1;
-    }
+    sel_names = &argv[first];
+    sel_count = argc - first;
   } else {
-    monitors[0].enabled = 1;
-    printf("No monitor specified, using first output: %s\n", monitors[0].name);
+    printf("No monitor specified, using first output\n");
   }
 
-  for (i = 0; i < monitor_count; i++) init_options(i);
-
-  config_read();
-
-  /* A zone without commands would only swallow clicks meant for the surface below */
-  int zones_used = 0;
-  for (i = 0; i < 8 * monitor_count; i++) {
-    int used = 0;
-    for (int j = 0; j < 9; j++) if (is_safe_command(zones[i].commands[j])) used = 1;
-    zones[i].enabled = used;
-    zones_used += used;
-  }
-  unless (zones_used) {
+  unless (setup_zones()) {
     fprintf(stderr, "No usable commands configured for the selected monitors, exiting\n");
     return 1;
   }
 
-  create_zones();
-
-  while (wl_display_dispatch(display) != -1) { }
+  ready = 1;
+  while (wl_display_dispatch(display) != -1) {
+    if (dirty) {
+      dirty = 0;
+      rebuild_zones();
+    }
+  }
 
   return 0;
 }
