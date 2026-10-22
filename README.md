@@ -1,3 +1,6 @@
+> **This repository has moved to Codeberg: https://codeberg.org/linux-bird/fittsmon**
+> It is archived here. Please use Codeberg for issues and pull requests.
+
 # FittsMon – Mouse Corner Action Tool for X11 and Wayland (Multi-Monitor Support)
 
 **FittsMon** is a lightweight utility for X11 and Wayland that binds mouse actions (clicks, scrolls, enter/leave) to screen corners and edges, triggering custom commands.
