@@ -82,7 +82,8 @@ Before using fittsmon, ensure your primary monitor is correctly set as primary i
 ### Start FittsMon with primary monitor (default)
 
 ```bash
-fittsmon
+fittsmon     # X11
+fittsmon-wl  # Wayland
 ```
 
 Automatically uses the primary monitor.
