@@ -43,7 +43,7 @@ sudo apt-get install libxcb1-dev libx11-dev libxcb-randr0-dev libglib2.0-dev lib
 ## 🛠️ Manual Installation 
 
 ```bash
-git clone https://codeberg.org/linux-bird/fittsmon.git
+git clone https://github.com/musqz/fittsmon.git
 cd fittsmon
 make && make install  
 ```
@@ -63,7 +63,7 @@ On first run, a sample config will be created at:
 Build and install with `makepkg` from `packaging/`:
 
 ```bash
-git clone https://codeberg.org/linux-bird/fittsmon.git
+git clone https://github.com/musqz/fittsmon.git
 cd fittsmon/packaging
 makepkg -si
 ```
