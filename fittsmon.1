@@ -233,9 +233,15 @@ If no monitor names are given, only the primary monitor is used.
 .B ~/.config/fittsmon/fittsmonrc
 User configuration file. Created automatically on first run with a template.
 
+.TP
+.B ~/.config/fittsmon\-wl/fittsmon\-wlrc
+Configuration file of
+.BR fittsmon\-wl .
+Same format. Created automatically on first run.
+
 .SH WAYLAND
 .B fittsmon\-wl
-is the Wayland build. It reads the same configuration file and takes the same
+is the Wayland build. It reads its own configuration file, ~/.config/fittsmon\-wl/fittsmon\-wlrc, and takes the same
 options. It runs on compositors that support wlr\-layer\-shell (labwc, sway, niri, Hyprland).
 Start it from the compositor autostart.
 

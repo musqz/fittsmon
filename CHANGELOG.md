@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Changed: `fittsmon-wl` reads `~/.config/fittsmon-wl/fittsmon-wlrc` instead of the X11 `fittsmonrc`. Copy your zones over to keep them.
 - Added: `fittsmon-wl` rebuilds its zones and re-reads the config when a monitor is plugged, unplugged or changes mode. Zones follow `--monitor` names, so a selected monitor that comes back gets its zones again. Also frees the shm buffer after attach, which would otherwise leak one per zone per rebuild.
 - Docs: README and `fittsmon.1` mention Wayland and `fittsmon-wl`.
 

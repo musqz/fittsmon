@@ -479,7 +479,7 @@ fill_file(const char *file_path)
   FILE *fp;
 
   char* lines[] = {
-    "#fittsmonrc example\n",
+    "#fittsmon-wlrc example\n",
     "#volume control in the top right corner:\n\n",
     "[TopRight]\n",
     "WheelUp=amixer -q sset Master 2+\n",
@@ -509,19 +509,19 @@ config_read ()
 {
   char *path;
 
-  path = g_build_filename (g_get_user_config_dir(), "fittsmon", "fittsmonrc", NULL);
+  path = g_build_filename (g_get_user_config_dir(), "fittsmon-wl", "fittsmon-wlrc", NULL);
   if (g_file_test (path, G_FILE_TEST_EXISTS)) {
     config_read_file(path);
     g_free(path);
     return;
   }
 
-  char *dir = g_build_filename (g_get_user_config_dir(), "fittsmon", NULL);
-  if (!g_file_test (dir, G_FILE_TEST_IS_DIR)) g_mkdir(dir, 0777);
+  char *dir = g_build_filename (g_get_user_config_dir(), "fittsmon-wl", NULL);
+  if (!g_file_test (dir, G_FILE_TEST_IS_DIR)) g_mkdir_with_parents(dir, 0777);
   g_free(dir);
 
   fill_file(path);
-  printf("Created a sample fittsmonrc for you in %s \n", path);
+  printf("Created a sample fittsmon-wlrc for you in %s \n", path);
 
   config_read_file (path);
   g_free(path);
@@ -601,7 +601,7 @@ print_usage ()
   printf("  fittsmon-wl [-h | -l]\n");
   printf("  fittsmon-wl [--monitor] name ...\n\n");
   printf("With no monitor given, the first output is used.\n");
-  printf("Config: ~/.config/fittsmon/fittsmonrc (same format as fittsmon)\n");
+  printf("Config: ~/.config/fittsmon-wl/fittsmon-wlrc (same format as fittsmon)\n");
 }
 
 int
