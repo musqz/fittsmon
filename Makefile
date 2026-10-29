@@ -79,6 +79,9 @@ install: $(TARGET) $(WL_TARGET)
 	@echo "Copy the example config to get started:"
 	@echo "  mkdir -p ~/.config/fittsmon"
 	@echo "  cp $(DATADIR)/$(CONFIG_FILE) ~/.config/fittsmon/fittsmonrc"
+	@echo "fittsmon-wl (Wayland) uses its own file:"
+	@echo "  mkdir -p ~/.config/fittsmon-wl"
+	@echo "  cp $(DATADIR)/$(CONFIG_FILE) ~/.config/fittsmon-wl/fittsmon-wlrc"
 
 uninstall:
 	rm -f  $(DESTDIR)$(BINDIR)/$(TARGET)
@@ -87,6 +90,6 @@ uninstall:
 	rm -f  $(DESTDIR)$(DATADIR)/$(CONFIG_FILE)
 	rm -f  $(DESTDIR)$(LICENSEDIR)/COPYING
 	@echo "Uninstall complete."
-	@echo "Note: ~/.config/fittsmon/fittsmonrc was not removed."
+	@echo "Note: ~/.config/fittsmon/fittsmonrc and ~/.config/fittsmon-wl/fittsmon-wlrc were not removed."
 
 .PHONY: all wl clean install uninstall

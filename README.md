@@ -55,6 +55,7 @@ On first run, a sample config will be created at:
 ```
 ~/.config/fittsmon/fittsmonrc
 ```
+`fittsmon-wl` (Wayland) uses `~/.config/fittsmon-wl/fittsmon-wlrc`.
 
 ---
 
@@ -119,7 +120,7 @@ fittsmon -h
 
 ## ⚙️ Configuration
 
-Edit the config at `~/.config/fittsmon/fittsmonrc`.
+Edit the config at `~/.config/fittsmon/fittsmonrc` (`~/.config/fittsmon-wl/fittsmon-wlrc` for `fittsmon-wl`).
 
 Each section targets a screen area on a monitor:
 
@@ -183,6 +184,8 @@ On Wayland, use `fittsmon-wl` in your compositor's autostart. It takes the same 
 ```bash
 fittsmon-wl --monitor eDP-1 &
 ```
+
+`fittsmon-wl` reads `~/.config/fittsmon-wl/fittsmon-wlrc`. `fittsmon` keeps using `~/.config/fittsmon/fittsmonrc`.
 
 Or add to your desktop environment's session startup settings.
 
